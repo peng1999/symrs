@@ -1,7 +1,8 @@
 extern crate num;
 extern crate symtern;
-#[macro_use] extern crate lazy_static;
+#[macro_use]
+extern crate lazy_static;
 
 pub mod expr;
 
-pub use expr::Expr as Expr;
+pub use expr::Expr;
