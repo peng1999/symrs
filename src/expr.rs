@@ -24,7 +24,7 @@ lazy_static! {
 pub struct Symbol(InlineSym);
 
 impl Symbol {
-    fn new(s: &str) -> Symbol {
+    pub fn new(s: &str) -> Symbol {
         let sym = sympool.lock().unwrap().intern(s).unwrap();
         Symbol(sym)
     }
