@@ -1,6 +1,6 @@
 extern crate symrs;
 
-use symrs::expr::*;
+use symrs::symbolic::*;
 
 #[test]
 fn symbol_display() {

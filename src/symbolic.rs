@@ -9,9 +9,21 @@ use symtern::adaptors::{self, Inline};
 pub enum Expr {
     Integer(BigInt),
     Symbol(Symbol),
-    Float(f64),
+    Approximate(f64),
 
     Product(Box<Expr>, Box<Expr>),
+
+    Undefined,
+}
+
+impl Display for Expr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Expr::*;
+        match *self {
+            Integer(ref i) => write!(f, "{}", i),
+            _ => unreachable!(),
+        }
+    }
 }
 
 type InlinePool = Inline<Pool<str, u32>>;
