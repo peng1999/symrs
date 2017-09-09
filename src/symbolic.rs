@@ -1,3 +1,5 @@
+//! Definition of the expression representation.
+
 use std::sync::Mutex;
 use std::fmt::{self, Display};
 use num::BigInt;
@@ -7,23 +9,31 @@ use symtern::adaptors::{self, Inline};
 
 use Expr::*;
 
+/// An expression representation.
 #[derive(Debug)]
 pub enum Expr<'a> {
+    /// Represent an integer.
     Integer(BigInt),
+    /// Represent a symbol like `x`, `y`, or `delta`.
     Symbol(Symbol),
+    /// Represent a float approximate value.
     Approximate(f64),
 
+    /// Represent a product of some expressions, like `x * y * z`.
     Product(Vec<&'a Expr<'a>>),
 
+    /// Represent an undefined value.
     Undefined,
 }
 
 impl<'a> Expr<'a> {
-    pub fn integer<I: Into<BigInt>>(i: I) -> Expr<'a> {
+    /// Construct a integer value.
+    pub fn integer<I: Into<BigInt>>(i: I) -> Expr<'static> {
         Integer(i.into())
     }
 
-    pub fn symbol(s: &str) -> Expr<'a> {
+    /// Construct a symbol.
+    pub fn symbol(s: &str) -> Expr<'static> {
         Expr::Symbol(Symbol::new(s))
     }
 }
@@ -45,12 +55,12 @@ lazy_static! {
     static ref SYMPOOL: Mutex<InlinePool> = Mutex::new(Inline::from(Pool::<str, u32>::new()));
 }
 
-/// The symbol in expressions such as x, y or delta.
+/// The symbol type.
 #[derive(Debug, Clone, Copy)]
 pub struct Symbol(InlineSym);
 
 impl Symbol {
-    /// Create a new symbol.
+    /// Construct a new symbol.
     pub fn new(s: &str) -> Symbol {
         let sym = SYMPOOL.lock().unwrap().intern(s).unwrap();
         Symbol(sym)
