@@ -7,3 +7,6 @@ authors = ["Peng Guanwen <pgw1999@outlook.com>"]
 lazy_static = "*"
 num = "*"
 symtern = "*"
+
+[features]
+check_doc = []

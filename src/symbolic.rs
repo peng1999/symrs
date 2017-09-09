@@ -5,22 +5,34 @@ use symtern::prelude::*;
 use symtern::{Pool, Sym};
 use symtern::adaptors::{self, Inline};
 
+use Expr::*;
+
 #[derive(Debug)]
-pub enum Expr {
+pub enum Expr<'a> {
     Integer(BigInt),
     Symbol(Symbol),
     Approximate(f64),
 
-    Product(Box<Expr>, Box<Expr>),
+    Product(Vec<&'a Expr<'a>>),
 
     Undefined,
 }
 
-impl Display for Expr {
+impl<'a> Expr<'a> {
+    pub fn integer<I: Into<BigInt>>(i: I) -> Expr<'a> {
+        Integer(i.into())
+    }
+
+    pub fn symbol(s: &str) -> Expr<'a> {
+        Expr::Symbol(Symbol::new(s))
+    }
+}
+
+impl<'a> Display for Expr<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Expr::*;
         match *self {
             Integer(ref i) => write!(f, "{}", i),
+            Expr::Symbol(ref s) => write!(f, "{}", s),
             _ => unreachable!(),
         }
     }
@@ -39,12 +51,6 @@ pub struct Symbol(InlineSym);
 
 impl Symbol {
     /// Create a new symbol.
-    /// # Examples
-    /// ```
-    /// use symrs::expr::Symbol;
-    ///
-    /// let s = Symbol::new("x");
-    /// ```
     pub fn new(s: &str) -> Symbol {
         let sym = SYMPOOL.lock().unwrap().intern(s).unwrap();
         Symbol(sym)
