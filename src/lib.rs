@@ -11,6 +11,7 @@ extern crate num;
 extern crate symtern;
 #[macro_use]
 extern crate lazy_static;
+extern crate itertools;
 
 pub mod symbolic;
 

@@ -6,11 +6,12 @@ use num::BigInt;
 use symtern::prelude::*;
 use symtern::{Pool, Sym};
 use symtern::adaptors::{self, Inline};
+use itertools::Itertools;
 
 use Expr::*;
 
 /// An expression representation.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr<'a> {
     /// Represent an integer.
     Integer(BigInt),
@@ -18,6 +19,9 @@ pub enum Expr<'a> {
     Symbol(Symbol),
     /// Represent a float approximate value.
     Approximate(f64),
+
+    /// Represent a sum of some expressions, like `x + y + z`.
+    Sum(Vec<&'a Expr<'a>>),
 
     /// Represent a product of some expressions, like `x * y * z`.
     Product(Vec<&'a Expr<'a>>),
@@ -36,14 +40,22 @@ impl<'a> Expr<'a> {
     pub fn symbol(s: &str) -> Expr<'static> {
         Expr::Symbol(Symbol::new(s))
     }
+
+    pub fn approximate<F: Into<f64>>(f: F) -> Expr<'static> {
+        Expr::Approximate(f.into())
+    }
 }
 
 impl<'a> Display for Expr<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Integer(ref i) => write!(f, "{}", i),
-            Expr::Symbol(ref s) => write!(f, "{}", s),
-            _ => unreachable!(),
+            Expr::Symbol(s) => write!(f, "{}", s),
+            Approximate(n) => write!(f, "{}", n),
+            Sum(ref args) => {
+                write!(f, "{}", args.into_iter().map(|a| format!("({})", a)).format("+"))
+            },
+            _ => unimplemented!(),
         }
     }
 }

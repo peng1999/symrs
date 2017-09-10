@@ -9,6 +9,7 @@ repository = "https://github.com/peng1999/symrs"
 lazy_static = "0.2"
 num = "0.1"
 symtern = "0.1"
+itertools = "0.6"
 
 [features]
 check_doc = []

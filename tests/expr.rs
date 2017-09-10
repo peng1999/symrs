@@ -25,4 +25,7 @@ fn display_expr() {
 
     let sym = Expr::symbol("x");
     assert_eq!(format!("{}", sym), "x".to_string());
+
+    let app = Expr::approximate(1.32f64);
+    assert_eq!(format!("{}", app), "1.32".to_string());
 }
