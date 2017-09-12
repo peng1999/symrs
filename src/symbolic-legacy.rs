@@ -1,3 +1,4 @@
+// NOTE: This is a legacy code trying using a reference in `Expr`, I will investigate it later.
 //! Definition of the expression representation.
 
 use std::sync::Mutex;
@@ -12,7 +13,7 @@ use Expr::*;
 
 /// An expression representation.
 #[derive(Debug, Clone)]
-pub enum Expr {
+pub enum Expr<'a> {
     /// Represent an integer.
     Integer(BigInt),
     /// Represent a symbol like `x`, `y`, or `delta`.
@@ -21,32 +22,32 @@ pub enum Expr {
     Approximate(f64),
 
     /// Represent a sum of some expressions, like `x + y + z`.
-    Sum(Vec<Expr>),
+    Sum(Vec<&'a Expr<'a>>),
 
     /// Represent a product of some expressions, like `x * y * z`.
-    Product(Vec<Expr>),
+    Product(Vec<&'a Expr<'a>>),
 
     /// Represent an undefined value.
     Undefined,
 }
 
-impl Expr {
+impl<'a> Expr<'a> {
     /// Construct a integer value.
-    pub fn integer<I: Into<BigInt>>(i: I) -> Expr {
+    pub fn integer<I: Into<BigInt>>(i: I) -> Expr<'static> {
         Integer(i.into())
     }
 
     /// Construct a symbol.
-    pub fn symbol(s: &str) -> Expr {
+    pub fn symbol(s: &str) -> Expr<'static> {
         Expr::Symbol(Symbol::new(s))
     }
 
-    pub fn approximate<F: Into<f64>>(f: F) -> Expr {
+    pub fn approximate<F: Into<f64>>(f: F) -> Expr<'static> {
         Expr::Approximate(f.into())
     }
 }
 
-impl Display for Expr {
+impl<'a> Display for Expr<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Integer(ref i) => write!(f, "{}", i),
