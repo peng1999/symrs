@@ -1,6 +1,6 @@
 [package]
 name = "symrs"
-version = "0.1.0"
+version = "0.0.0"
 authors = ["Peng Guanwen <pgw1999@outlook.com>"]
 description = "Symbolic computation in Rust"
 repository = "https://github.com/peng1999/symrs"
