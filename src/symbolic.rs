@@ -16,9 +16,9 @@ pub enum Expr {
     /// Represent an integer.
     Integer(BigInt),
     /// Represent a symbol like `x`, `y`, or `delta`.
-    Symbol(Symbol),
+    Sym(Symbol),
     /// Represent a float approximate value.
-    Approximate(f64),
+    Approx(f64),
 
     /// Represent a sum of some expressions, like `x + y + z`.
     Sum(Vec<Expr>),
@@ -30,6 +30,7 @@ pub enum Expr {
     Undefined,
 }
 
+/// Constructors.
 impl Expr {
     /// Construct a integer value.
     pub fn integer<I: Into<BigInt>>(i: I) -> Expr {
@@ -38,23 +39,37 @@ impl Expr {
 
     /// Construct a symbol.
     pub fn symbol(s: &str) -> Expr {
-        Expr::Symbol(Symbol::new(s))
+        Sym(Symbol::new(s))
     }
 
     pub fn approximate<F: Into<f64>>(f: F) -> Expr {
-        Expr::Approximate(f.into())
+        Approx(f.into())
+    }
+}
+
+/// Classify a `Expr`.
+impl Expr {
+    pub fn is_primitive(&self) -> bool {
+        match *self {
+            Integer(_) | Sym(_) | Approx(_) => true,
+            _ => false,
+        }
     }
 }
 
 impl Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let fmt_f = |elt: &Expr, f: &mut FnMut(&Display) -> fmt::Result| if elt.is_primitive() {
+            f(elt)
+        } else {
+            f(&format_args!("({})", elt))
+        };
         match *self {
             Integer(ref i) => write!(f, "{}", i),
-            Expr::Symbol(s) => write!(f, "{}", s),
-            Approximate(n) => write!(f, "{}", n),
-            Sum(ref args) => {
-                write!(f, "{}", args.into_iter().map(|a| format!("({})", a)).format("+"))
-            },
+            Sym(s) => write!(f, "{}", s),
+            Approx(n) => write!(f, "{}", n),
+            Sum(ref args) => write!(f, "{}", args.into_iter().format_with(" + ", fmt_f)),
+            Product(ref args) => write!(f, "{}", args.into_iter().format_with(" * ", fmt_f)),
             _ => unimplemented!(),
         }
     }
