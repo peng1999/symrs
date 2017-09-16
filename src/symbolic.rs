@@ -2,6 +2,7 @@
 
 use std::sync::Mutex;
 use std::fmt::{self, Display};
+use std::ops::{Add, Mul};
 use num::BigInt;
 use symtern::prelude::*;
 use symtern::{Pool, Sym};
@@ -11,7 +12,7 @@ use itertools::Itertools;
 use Expr::*;
 
 /// An expression representation.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Expr {
     /// Represent an integer.
     Integer(BigInt),
@@ -57,6 +58,51 @@ impl Expr {
     }
 }
 
+impl<E: Into<Expr>> Add<E> for Expr {
+    type Output = Expr;
+    fn add(self, rhs: E) -> Self::Output {
+        Sum(vec![self, rhs.into()])
+    }
+}
+
+impl<E: Into<Expr>> Mul<E> for Expr {
+    type Output = Expr;
+    fn mul(self, rhs: E) -> Self::Output {
+        Product(vec![self, rhs.into()])
+    }
+}
+
+mod conv {
+    use super::Expr;
+    use num::{BigInt, BigUint};
+
+    macro_rules! impl_from {
+        ($from_t: ty, $method: ident) => {
+            impl From<$from_t> for Expr {
+                fn from(x: $from_t) -> Expr {
+                    $crate::symbolic::Expr::$method(x)
+                }
+            }
+        }
+    }
+
+    impl_from! { i8, integer }
+    impl_from! { i16, integer }
+    impl_from! { i32, integer }
+    impl_from! { i64, integer }
+    impl_from! { u8, integer }
+    impl_from! { u16, integer }
+    impl_from! { u32, integer }
+    impl_from! { u64, integer }
+    impl_from! { isize, integer }
+    impl_from! { usize, integer }
+    impl_from! { BigInt, integer }
+    impl_from! { BigUint, integer }
+
+    impl_from! { f32, approximate }
+    impl_from! { f64, approximate }
+}
+
 impl Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let fmt_f = |elt: &Expr, f: &mut FnMut(&Display) -> fmt::Result| if elt.is_primitive() {
@@ -83,7 +129,7 @@ lazy_static! {
 }
 
 /// The symbol type.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Symbol(InlineSym);
 
 impl Symbol {
