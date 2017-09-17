@@ -1,7 +1,7 @@
 extern crate symrs;
 extern crate num;
 
-use symrs::symbolic::*;
+use symrs::sym::*;
 use num::BigInt;
 
 #[test]
