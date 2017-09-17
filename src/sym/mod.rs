@@ -1,4 +1,14 @@
 //! Definition of the expression representation.
+//!
+//! You can use operators directly:
+//!
+//! ```
+//! use symrs::sym::{Expr, Symbol};
+//!
+//! let x = Symbol::new("x");
+//! let b = x + 1;
+//! assert_eq!(b, Expr::Sum(vec![Expr::Sym(x), Expr::integer(1)]));
+//! ```
 
 use std::fmt::{self, Display};
 use std::ops::{Add, Mul};
@@ -41,6 +51,7 @@ impl Expr {
         Sym(Symbol::new(s))
     }
 
+    /// Construct an approximate value.
     pub fn approximate<F: Into<f64>>(f: F) -> Expr {
         Approx(f.into())
     }
@@ -70,8 +81,23 @@ impl<E: Into<Expr>> Mul<E> for Expr {
     }
 }
 
+macro_rules! impl_op_for_t {
+    ($trait:ident, $op:ident, $cons:ident, $lhs_t:ty) => {
+        impl<T: Into<Expr>> $trait<T> for Symbol {
+            type Output = Expr;
+            fn $op(self, rhs: T) -> Self::Output {
+                $cons(vec![self.into(), rhs.into()])
+            }
+        }
+    }
+}
+
+impl_op_for_t! {Add, add, Sum, Symbol}
+impl_op_for_t! {Mul, mul, Product, Symbol}
+
 mod conv {
     use super::Expr;
+    use super::Symbol;
     use num::{BigInt, BigUint};
 
     macro_rules! impl_from {
@@ -97,6 +123,12 @@ mod conv {
     impl_from! { BigInt, integer }
     impl_from! { BigUint, integer }
 
+    impl From<Symbol> for Expr {
+        fn from(s: Symbol) -> Expr {
+            Expr::Sym(s)
+        }
+    }
+
     impl_from! { f32, approximate }
     impl_from! { f64, approximate }
 }
@@ -119,4 +151,3 @@ impl Display for Expr {
         }
     }
 }
-
