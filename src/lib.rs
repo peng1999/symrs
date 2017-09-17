@@ -13,7 +13,7 @@ extern crate symtern;
 extern crate lazy_static;
 extern crate itertools;
 
-pub mod symbolic;
+pub mod sym;
 
-pub use symbolic::Expr;
+pub use sym::Expr;
 

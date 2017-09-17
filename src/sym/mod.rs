@@ -80,7 +80,7 @@ mod conv {
         ($from_t: ty, $method: ident) => {
             impl From<$from_t> for Expr {
                 fn from(x: $from_t) -> Expr {
-                    $crate::symbolic::Expr::$method(x)
+                    $crate::sym::Expr::$method(x)
                 }
             }
         }
