@@ -21,7 +21,7 @@ impl<E: Into<Expr>> Mul<E> for Expr {
 macro_rules! impl_op_for_t {
     ($trait:ident, $op:ident, $cons:ident, $lhs_t:ty) => {
         impl<T: Into<Expr>> $trait<T> for Symbol {
-            type Output = Expr;
+           type Output = Expr;
             fn $op(self, rhs: T) -> Self::Output {
                 $cons(vec![self.into(), rhs.into()])
             }
@@ -29,22 +29,23 @@ macro_rules! impl_op_for_t {
     }
 }
 
-impl_op_for_t! {Add, add, Sum, Symbol}
-impl_op_for_t! {Mul, mul, Product, Symbol}
-
-macro_rules! impl_from {
-    ($from_t: ty, $method: ident) => {
-        impl From<$from_t> for Expr {
-            fn from(x: $from_t) -> Expr {
-                $crate::sym::Expr::$method(x)
-            }
-        }
+macro_rules! expand_op_delegate {
+    {
+        $(impl<T: Into<_>> $op_t:ident<T> for $expr:ident { use $cons:ident as $op:ident; } )*
+    } => {
     }
 }
 
+impl_op_for_t! {Add, add, Sum, Symbol}
+impl_op_for_t! {Mul, mul, Product, Symbol}
+
+expand_op_delegate! {
+    impl<T:Into<_>> Mul<T> for Expr { use Product as mul; }
+}
+
 macro_rules! expand_conv_delegate {
-    { (impl From<$from_t: ty> for Expr using $method: ident);* } => {
-        (
+    { $(impl From<$from_t:ty> for Expr using $method:ident;)* } => {
+        $(
             impl From<$from_t> for Expr {
                 fn from(x: $from_t) -> Expr {
                     $crate::sym::Expr::$method(x)
@@ -54,24 +55,26 @@ macro_rules! expand_conv_delegate {
     }
 }
 
-impl_from! { i8, integer }
-impl_from! { i16, integer }
-impl_from! { i32, integer }
-impl_from! { i64, integer }
-impl_from! { u8, integer }
-impl_from! { u16, integer }
-impl_from! { u32, integer }
-impl_from! { u64, integer }
-impl_from! { isize, integer }
-impl_from! { usize, integer }
-impl_from! { BigInt, integer }
-impl_from! { BigUint, integer }
+expand_conv_delegate! {
+    impl From<u8> for Expr using integer;
+    impl From<u64> for Expr using integer;
+    impl From<i16> for Expr using integer;
+    impl From<isize> for Expr using integer;
+    impl From<i32> for Expr using integer;
+    impl From<i64> for Expr using integer;
+    impl From<u16> for Expr using integer;
+    impl From<i8> for Expr using integer;
+    impl From<usize> for Expr using integer;
+    impl From<u32> for Expr using integer;
+    impl From<BigUint> for Expr using integer;
+    impl From<BigInt> for Expr using integer;
+
+    impl From<f32> for Expr using approximate;
+    impl From<f64> for Expr using approximate;
+}
 
 impl From<Symbol> for Expr {
     fn from(s: Symbol) -> Expr {
         Expr::Sym(s)
     }
 }
-
-impl_from! { f32, approximate }
-impl_from! { f64, approximate }
