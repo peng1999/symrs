@@ -1,0 +1,14 @@
+[tasks.test]
+dependencies = [
+    "check",
+    "check-examples",
+    "clippy",
+]
+
+[tasks.check]
+command = "cargo"
+args = ["check"]
+
+[tasks.check-examples]
+command = "cargo"
+args = ["check", "--examples"]
