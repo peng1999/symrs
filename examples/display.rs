@@ -9,7 +9,8 @@ fn main() {
     let ec = x + e + b;
     let y = Expr::symbol("y");
     let eb = ec * y;
+    let ed = Expr::Ratio(Box::new(1.into()), Box::new(eb.clone()));
 
-    println!("Repr: {:?}", eb);
-    println!("Disp: {}", eb);
+    println!("eb : {}", eb);
+    println!("ed : {}", ed);
 }
