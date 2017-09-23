@@ -1,2 +1,4 @@
 # symrs
 Symbolic computation in Rust
+
+Note: THIS PROJECT IS UNDER DEVELOPEMENT AND HASN'T GOT A BASIC FUNCTION.
