@@ -27,7 +27,7 @@ macro_rules! impl_op_for_t {
             }
         }
     }
-
+}
 
 impl_op_for_t! {Add, add, Sum, Symbol}
 impl_op_for_t! {Mul, mul, Product, Symbol}
