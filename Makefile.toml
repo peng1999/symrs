@@ -1,3 +1,7 @@
+[tasks.release-test]
+env = { RUSTFLAGS = "--cfg check_doc" }
+run_task = "test"
+
 [tasks.test]
 dependencies = [
     "check",

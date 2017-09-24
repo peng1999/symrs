@@ -5,7 +5,7 @@
 //! The symbolic module contains functionality of storing and manipulating the symbolic math
 //! expressions.
 
-#![cfg_attr(feature = "check_doc", deny(missing_docs))]
+#![cfg_attr(check_doc, deny(missing_docs))]
 
 extern crate num;
 extern crate symtern;
@@ -16,4 +16,3 @@ extern crate itertools;
 pub mod sym;
 
 pub use sym::Expr;
-
