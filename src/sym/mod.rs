@@ -83,7 +83,12 @@ impl Display for Expr {
             Approx(n) => write!(f, "{}", n),
             Sum(ref args) => write!(f, "{}", args.into_iter().format_with(" + ", fmt_f)),
             Product(ref args) => write!(f, "{}", args.into_iter().format_with(" * ", fmt_f)),
-            Ratio(ref n, ref d) => fmt_f(n, &mut |n_| fmt_f(d, &mut |d_| write!(f, "{} / {}", n_, d_))),
+            Ratio(ref n, ref d) => {
+                fmt_f(
+                    n,
+                    &mut |n_| fmt_f(d, &mut |d_| write!(f, "{} / {}", n_, d_)),
+                )
+            }
             _ => unimplemented!(),
         }
     }

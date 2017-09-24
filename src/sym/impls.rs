@@ -12,7 +12,7 @@ use std::ops::{Add, Mul, Div};
 //         Sum(vec![self, rhs.into()])
 //     }
 // }
-// 
+//
 // impl<E: Into<Expr>> Mul<E> for Expr {
 //     type Output = Expr;
 //     fn mul(self, rhs: E) -> Self::Output {
