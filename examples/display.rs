@@ -9,7 +9,7 @@ fn main() {
     let ec = x + e + b;
     let y = Expr::symbol("y");
     let eb = ec * y;
-    let ed = eb.clone() / 1;
+    let ed = 1 / eb.clone();
 
     println!("eb : {}", eb);
     println!("ed : {}", ed);

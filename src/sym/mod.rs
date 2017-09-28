@@ -20,7 +20,7 @@ pub use self::symbol::Symbol;
 
 use Expr::*;
 
-/// An expression representation.
+/// An owned expression representation.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Expr {
     /// Represent an integer.
@@ -29,6 +29,8 @@ pub enum Expr {
     Sym(Symbol),
     /// Represent a float approximate value.
     Approx(f64),
+
+    Neg(Box<Expr>),
 
     /// Represent a sum of some expressions, like `x + y + z`.
     Sum(Vec<Expr>),
@@ -56,6 +58,10 @@ impl Expr {
     /// Construct an approximate value.
     pub fn approximate<F: Into<f64>>(f: F) -> Expr {
         Approx(f.into())
+    }
+
+    pub fn negative<E:Into<Expr>>(e: E) -> Expr {
+        Neg(Box::new(e.into()))
     }
 }
 
