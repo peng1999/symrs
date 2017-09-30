@@ -60,7 +60,7 @@ impl Expr {
         Approx(f.into())
     }
 
-    pub fn negative<E:Into<Expr>>(e: E) -> Expr {
+    pub fn negative<E: Into<Expr>>(e: E) -> Expr {
         Neg(Box::new(e.into()))
     }
 }

@@ -5,47 +5,6 @@ use std::ops::{Add, Sub, Mul, Div};
 
 // impls for operators
 
-// impl<E: Into<Expr>> Add<E> for Expr {
-//     type Output = Expr;
-//     fn add(self, rhs: E) -> Self::Output {
-//         Sum(vec![self, rhs.into()])
-//     }
-// }
-//
-// impl<E: Into<Expr>> Mul<E> for Expr {
-//     type Output = Expr;
-//     fn mul(self, rhs: E) -> Self::Output {
-//         Product(vec![self, rhs.into()])
-//     }
-// }
-
-// impl<E: Into<Expr>> Div<E> for Expr {
-//     type Output = Expr;
-//     fn div(self, rhs: E) -> Self::Output {
-//         Ratio(Box::new(self), Box::new(rhs.into()))
-//     }
-// }
-
-// impl Add<Expr> for i32 {
-//     type Output = Expr;
-//     fn add(self, rhs: Expr) -> Self::Output {
-//         Sum(vec![self.into(), rhs])
-//     }
-// }
-
-// impl Div<Expr> for i32 {
-//     type Output = Expr;
-//     fn div(self, rhs: Expr) -> Self::Output {
-//         Ratio(Box::new(self.into()), Box::new(rhs))
-//     }
-// }
-
-// macro_rules! cons_expr {
-//     ($lhs:ident, $rhs:ident) => {
-//         $crate::sym::Expr::Sum(vec![self.into(), rhs.into()])
-//     }
-// }
-
 /// Expand to the functuon details in implaccording to the given trait.
 macro_rules! op_func_impl {
     // Add: self + rhs
@@ -73,9 +32,6 @@ macro_rules! op_func_impl {
             $crate::sym::Expr::Sum(vec![self.into(), $crate::sym::Expr::negative(rhs)])
         }
     };
-    // ($name:ident, $type:ident, $cons:expr) => {
-    //     fn $name(self, rhs: $type) -> Self::Output { $cons }
-    // };
 }
 
 /// Expand to operator impls.
