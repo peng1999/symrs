@@ -8,27 +8,27 @@ use std::ops::{Add, Sub, Mul, Div};
 /// Expand to the functuon details in implaccording to the given trait.
 macro_rules! op_func_impl {
     // Add: self + rhs
-    (Add, $type:ty) => {
-        fn add(self, rhs: $type) -> Self::Output {
+    (Add, $type_:ty) => {
+        fn add(self, rhs: $type_) -> Self::Output {
             $crate::sym::Expr::Sum(vec![self.into(), rhs.into()])
         }
     };
     // Mul: self * rhs
-    (Mul, $type:ty) => {
-        fn mul(self, rhs: $type) -> Self::Output {
+    (Mul, $type_:ty) => {
+        fn mul(self, rhs: $type_) -> Self::Output {
             $crate::sym::Expr::Product(vec![self.into(), rhs.into()])
         }
     };
     // Div: self / rhs
-    (Div, $type:ty) => {
-        fn div(self, rhs: $type) -> Self::Output {
+    (Div, $type_:ty) => {
+        fn div(self, rhs: $type_) -> Self::Output {
             $crate::sym::Expr::Ratio(Box::new(self.into()), Box::new(rhs.into()))
         }
     };
     // There isn't a minus constructor, should add a negative.
     // Sub: self + (-rhs)
-    (Sub, $type:ty) => {
-        fn sub(self, rhs: $type) -> Self::Output {
+    (Sub, $type_:ty) => {
+        fn sub(self, rhs: $type_) -> Self::Output {
             $crate::sym::Expr::Sum(vec![self.into(), $crate::sym::Expr::negative(rhs)])
         }
     };
@@ -45,8 +45,8 @@ macro_rules! op_impls {
         op_impls! {$($rest)*}
     };
     // The form `Expr/Symbol op T`.
-    (impl $trait:ident<$rhs_t:ty> for $type:ty; $($rest:tt)*) => {
-        impl $trait<$rhs_t> for $type {
+    (impl $trait:ident<$rhs_t:ty> for $type_:ty; $($rest:tt)*) => {
+        impl $trait<$rhs_t> for $type_ {
             type Output = Expr;
             op_func_impl! {$trait, $rhs_t}
         }
