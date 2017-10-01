@@ -20,11 +20,15 @@ environment:
         # Nightly 64-bit MSVC
         - channel: nightly
           target: x86_64-pc-windows-msvc
-          #cargoflags: --features "unstable"
         # Nightly 32-bit MSVC
         - channel: nightly
           target: i686-pc-windows-msvc
-          #cargoflags: --features "unstable"
+        # Lowest supported version 64-bit MSVC
+        - channel: 1.14.0
+          target: x86_64-pc-windows-msvc
+        # Lowest supported version 32-bit MSVC
+        - channel: 1.14.0
+          target: i686-pc-windows-msvc
 
 ## Install Script ##
 
