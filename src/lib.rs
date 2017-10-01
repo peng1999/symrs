@@ -6,6 +6,7 @@
 //! expressions.
 
 #![cfg_attr(check_doc, deny(missing_docs))]
+#![cfg_attr(feature = "cargo-clippy", warn(clippy))]
 
 extern crate num;
 extern crate symtern;

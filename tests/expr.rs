@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "cargo-clippy", allow(identity_op))]
+
 extern crate symrs;
 extern crate num;
 
@@ -33,6 +35,7 @@ fn display_expr() {
 }
 
 #[test]
+#[cfg_attr(feature = "cargo-clippy", allow(unreadable_literal))]
 fn convert_from() {
     assert_eq!(Expr::from(3), Expr::integer(3));
     assert_eq!(Expr::from(3i8), Expr::integer(3));
@@ -43,4 +46,54 @@ fn convert_from() {
 
     assert_eq!(Expr::from(3.5554), Expr::Approx(3.5554));
     assert_eq!(Expr::from(3.5554f32), Expr::approximate(3.5554f32));
+}
+
+#[test]
+fn operators_works() {
+    let x = Symbol::new("x");
+    let y = Symbol::new("y");
+    let z = Symbol::new("z");
+    let big_3: BigInt = 3.into();
+
+    // assert_eq!(x + y, Expr::Sum(vec![Expr::Sym(x), Expr::Sym(y)]));
+    // assert_eq!(1 + y, Expr::Sum(vec![Expr::Integer(1.into()), Expr::Sym(y)]));
+    // assert_eq!(x + 1, Expr::Sum(vec![Expr::Sym(x), Expr::Integer(1.into())]));
+
+    // These operators should just works.
+    let _ignore = [
+        // Add
+        x + y,          // sym + sym
+        x + 1 + z,      // expr + sym
+        x + (5 + y),    // sym + expr
+        x + 4.0,        // sym + f
+        4.0 + x,        // f + sym
+        big_3.clone() + y,      // big + sym
+        y + (x + big_3.clone()),// sym + big
+        // Sub
+        x - y,          // sym - sym
+        x - 1 - z,      // expr - sym
+        x - (5 - y),    // sym - expr
+        x - 4.0,        // sym - f
+        4.0 - x,        // f - sym
+        big_3.clone() - y,      // big - sym
+        y - (x - big_3.clone()),// sym - big
+        // Mul
+        x * y,          // sym * sym
+        x * 1 * z,      // expr * sym
+        x * (5 * y),    // sym * expr
+        x * 4.0,        // sym * f
+        4.0 * x,        // f * sym
+        big_3.clone() * y,      // big * sym
+        y * (x * big_3.clone()),// sym * big
+        // Div
+        x / y,          // sym / sym
+        x / 1 / z,      // expr / sym
+        x / (5 / y),    // sym / expr
+        x / 4.0,        // sym / f
+        4.0 / x,        // f / sym
+        big_3.clone() / y,      // big / sym
+        y / (x / big_3.clone()),// sym / big
+        // Mixed
+        x + (4 - (x / 2)) * z,
+    ];
 }
