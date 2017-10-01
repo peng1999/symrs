@@ -37,18 +37,18 @@ macro_rules! op_func_impl {
 /// Expand to operator impls.
 macro_rules! op_impls {
     // The form `T op Expr/Symbol`.
-    (impl<T: Into<Expr>> $trait:ident<T> for $lhs_t:ty; $($rest:tt)* ) => {
-        impl<T: Into<Expr>> $trait<T> for $lhs_t {
+    (impl<T: Into<Expr>> $trait_:ident<T> for $lhs_t:ty; $($rest:tt)* ) => {
+        impl<T: Into<Expr>> $trait_<T> for $lhs_t {
             type Output = Expr;
-            op_func_impl! {$trait, T}
+            op_func_impl! {$trait_, T}
         }
         op_impls! {$($rest)*}
     };
     // The form `Expr/Symbol op T`.
-    (impl $trait:ident<$rhs_t:ty> for $type_:ty; $($rest:tt)*) => {
-        impl $trait<$rhs_t> for $type_ {
+    (impl $trait_:ident<$rhs_t:ty> for $type_:ty; $($rest:tt)*) => {
+        impl $trait_<$rhs_t> for $type_ {
             type Output = Expr;
-            op_func_impl! {$trait, $rhs_t}
+            op_func_impl! {$trait_, $rhs_t}
         }
         op_impls! {$($rest)*}
     };
