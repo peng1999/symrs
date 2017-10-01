@@ -4,3 +4,9 @@
 Symbolic computation in Rust
 
 Note: THIS PROJECT IS UNDER DEVELOPEMENT AND HASN'T GOT A BASIC FUNCTION.
+
+# License
+
+symrs is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0), with portions covered by various BSD-like licenses.
+
+See [LICENSE-APACHE](LICENSE-APACHE), and [LICENSE-MIT](LICENSE-MIT) for details.
