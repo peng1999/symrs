@@ -8,27 +8,27 @@ use std::ops::{Add, Sub, Mul, Div};
 /// Expand to the functuon details in implaccording to the given trait.
 macro_rules! op_func_impl {
     // Add: self + rhs
-    (Add, $type_:ty) => {
-        fn add(self, rhs: $type_) -> Self::Output {
+    (Add, $type:ty) => {
+        fn add(self, rhs: $type) -> Self::Output {
             $crate::sym::Expr::Sum(vec![self.into(), rhs.into()])
         }
     };
     // Mul: self * rhs
-    (Mul, $type_:ty) => {
-        fn mul(self, rhs: $type_) -> Self::Output {
+    (Mul, $type:ty) => {
+        fn mul(self, rhs: $type) -> Self::Output {
             $crate::sym::Expr::Product(vec![self.into(), rhs.into()])
         }
     };
     // Div: self / rhs
-    (Div, $type_:ty) => {
-        fn div(self, rhs: $type_) -> Self::Output {
+    (Div, $type:ty) => {
+        fn div(self, rhs: $type) -> Self::Output {
             $crate::sym::Expr::Ratio(Box::new(self.into()), Box::new(rhs.into()))
         }
     };
     // There isn't a minus constructor, should add a negative.
     // Sub: self + (-rhs)
-    (Sub, $type_:ty) => {
-        fn sub(self, rhs: $type_) -> Self::Output {
+    (Sub, $type:ty) => {
+        fn sub(self, rhs: $type) -> Self::Output {
             $crate::sym::Expr::Sum(vec![self.into(), $crate::sym::Expr::negative(rhs)])
         }
     };
@@ -37,18 +37,18 @@ macro_rules! op_func_impl {
 /// Expand to operator impls.
 macro_rules! op_impls {
     // The form `T op Expr/Symbol`.
-    (impl<T: Into<Expr>> $trait_:ident<T> for $lhs_t:ty; $($rest:tt)* ) => {
-        impl<T: Into<Expr>> $trait_<T> for $lhs_t {
+    (impl<T: Into<Expr>> $trait:ident<T> for $lhs_t:ty; $($rest:tt)* ) => {
+        impl<T: Into<Expr>> $trait<T> for $lhs_t {
             type Output = Expr;
-            op_func_impl! {$trait_, T}
+            op_func_impl! {$trait, T}
         }
         op_impls! {$($rest)*}
     };
     // The form `Expr/Symbol op T`.
-    (impl $trait_:ident<$rhs_t:ty> for $type_:ty; $($rest:tt)*) => {
-        impl $trait_<$rhs_t> for $type_ {
+    (impl $trait:ident<$rhs_t:ty> for $type:ty; $($rest:tt)*) => {
+        impl $trait<$rhs_t> for $type {
             type Output = Expr;
-            op_func_impl! {$trait_, $rhs_t}
+            op_func_impl! {$trait, $rhs_t}
         }
         op_impls! {$($rest)*}
     };
