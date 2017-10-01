@@ -3,6 +3,7 @@ language: rust
 rust:
     - stable
     - nightly
+    - 1.4.0
 
 script:
     - cargo build --release --verbose
