@@ -67,32 +67,32 @@ fn operators_works() {
         x + (5 + y),    // sym + expr
         x + 4.0,        // sym + f
         4.0 + x,        // f + sym
-        big_3.clone() + y,      // big + sym
-        y + (x + big_3.clone()),// sym + big
+        &big_3 + y,      // big + sym
+        y + (x + &big_3),// sym + big
         // Sub
         x - y,          // sym - sym
         x - 1 - z,      // expr - sym
         x - (5 - y),    // sym - expr
         x - 4.0,        // sym - f
         4.0 - x,        // f - sym
-        big_3.clone() - y,      // big - sym
-        y - (x - big_3.clone()),// sym - big
+        &big_3 - y,      // big - sym
+        y - (x - &big_3),// sym - big
         // Mul
         x * y,          // sym * sym
         x * 1 * z,      // expr * sym
         x * (5 * y),    // sym * expr
         x * 4.0,        // sym * f
         4.0 * x,        // f * sym
-        big_3.clone() * y,      // big * sym
-        y * (x * big_3.clone()),// sym * big
+        &big_3 * y,      // big * sym
+        y * (x * &big_3),// sym * big
         // Div
         x / y,          // sym / sym
         x / 1 / z,      // expr / sym
         x / (5 / y),    // sym / expr
         x / 4.0,        // sym / f
         4.0 / x,        // f / sym
-        big_3.clone() / y,      // big / sym
-        y / (x / big_3.clone()),// sym / big
+        &big_3 / y,      // big / sym
+        y / (x / &big_3),// sym / big
         // Mixed
         x + (4 - (x / 2)) * z,
     ];

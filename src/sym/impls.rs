@@ -5,42 +5,61 @@ use std::ops::{Add, Sub, Mul, Div};
 
 // impls for operators
 
+// Clone it if it's a ref.
+macro_rules! fwd_clone {
+    (@Take $name:ident) => {$name};
+    (@Ref $name:ident) => {$name.clone()}
+}
+
 /// Expand to the functuon details in implaccording to the given trait.
 macro_rules! op_func_impl {
     // Add: self + rhs
-    (Add, $type_:ty) => {
+    (Add, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn add(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Sum(vec![self.into(), rhs.into()])
+            $crate::sym::Expr::Sum(vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()])
         }
     };
     // Mul: self * rhs
-    (Mul, $type_:ty) => {
+    (Mul, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn mul(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Product(vec![self.into(), rhs.into()])
+            $crate::sym::Expr::Product(vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()])
         }
     };
     // Div: self / rhs
-    (Div, $type_:ty) => {
+    (Div, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn div(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Ratio(Box::new(self.into()), Box::new(rhs.into()))
+            $crate::sym::Expr::Ratio(Box::new(fwd_clone!(@$lm self).into()), Box::new(fwd_clone!(@$rm rhs).into()))
         }
     };
     // There isn't a minus constructor, should add a negative.
     // Sub: self + (-rhs)
-    (Sub, $type_:ty) => {
+    (Sub, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn sub(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Sum(vec![self.into(), $crate::sym::Expr::negative(rhs)])
+            $crate::sym::Expr::Sum(vec![fwd_clone!(@$lm self).into(), $crate::sym::Expr::negative(fwd_clone!(@$rm rhs))])
         }
     };
 }
 
 /// Expand to operator impls.
+/// Will impl A op B, &A op B, A op &B, &A op &B.
 macro_rules! op_impls {
     // The form `T op Expr/Symbol`.
     (impl<T: Into<Expr>> $trait_:ident<T> for $lhs_t:ty; $($rest:tt)* ) => {
         impl<T: Into<Expr>> $trait_<T> for $lhs_t {
             type Output = Expr;
-            op_func_impl! {$trait_, T}
+            op_func_impl! {$trait_, T, @Take, @Take}
+        }
+        impl<'a, T: Into<Expr> + Clone> $trait_<&'a T> for $lhs_t {
+            type Output = Expr;
+            op_func_impl! {$trait_, &T, @Take, @Ref}
+        }
+        impl<'a, T: Into<Expr>> $trait_<T> for &'a $lhs_t {
+            type Output = Expr;
+            op_func_impl! {$trait_, T, @Ref, @Take}
+        }
+        impl<'a,'b, T: Into<Expr> + Clone> $trait_<&'a T> for &'b $lhs_t {
+            type Output = Expr;
+            op_func_impl! {$trait_, &T, @Ref, @Ref}
         }
         op_impls! {$($rest)*}
     };
@@ -48,7 +67,19 @@ macro_rules! op_impls {
     (impl $trait_:ident<$rhs_t:ty> for $type_:ty; $($rest:tt)*) => {
         impl $trait_<$rhs_t> for $type_ {
             type Output = Expr;
-            op_func_impl! {$trait_, $rhs_t}
+            op_func_impl! {$trait_, $rhs_t, @Take, @Take}
+        }
+        impl<'a> $trait_<$rhs_t> for &'a $type_ {
+            type Output = Expr;
+            op_func_impl! {$trait_, $rhs_t, @Ref, @Take}
+        }
+        impl<'a> $trait_<&'a $rhs_t> for $type_ {
+            type Output = Expr;
+            op_func_impl! {$trait_, &$rhs_t, @Take, @Ref}
+        }
+        impl<'a, 'b> $trait_<&'a $rhs_t> for &'b $type_ {
+            type Output = Expr;
+            op_func_impl! {$trait_, &$rhs_t, @Ref, @Ref}
         }
         op_impls! {$($rest)*}
     };
