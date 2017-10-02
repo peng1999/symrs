@@ -35,6 +35,51 @@ fn display_expr() {
 }
 
 #[test]
+fn classify_expr() {
+    let x = Symbol::new("x");
+
+    // is_primitive works.
+    assert_eq!(Expr::from(x).is_primitive(), true);
+    assert_eq!(Expr::symbol("x").is_primitive(), true);
+    assert_eq!(Expr::integer(3).is_primitive(), true);
+    assert_eq!(Expr::approximate(3.5).is_primitive(), true);
+
+    assert_eq!((x - 3).is_primitive(), false);
+    assert_eq!((x + 3).is_primitive(), false);
+
+    // rank works.
+    let i = Expr::integer(3);
+    let s = Expr::symbol("y");
+    let approx = Expr::approximate(3.4);
+
+    let neg = Expr::negative(x);
+
+    let mul = &neg * 4;
+    let div = &s / &i;
+
+    let add = &i + &div;
+    let sub = &approx - &i;
+
+    assert_eq!(i.priority_rank(), 0);
+    assert_eq!(s.priority_rank(), 0);
+    assert_eq!(approx.priority_rank(), 0);
+
+    assert!(i.priority_rank() < neg.priority_rank());
+    assert!(s.priority_rank() < neg.priority_rank());
+    assert!(approx.priority_rank() < neg.priority_rank());
+
+    assert!(neg.priority_rank() < mul.priority_rank());
+    assert!(neg.priority_rank() < div.priority_rank());
+
+    assert_eq!(mul.priority_rank(), div.priority_rank());
+
+    assert!(mul.priority_rank() < add.priority_rank());
+    assert!(mul.priority_rank() < sub.priority_rank());
+
+    assert_eq!(add.priority_rank(), sub.priority_rank());
+}
+
+#[test]
 #[cfg_attr(feature = "cargo-clippy", allow(unreadable_literal))]
 fn convert_from() {
     assert_eq!(Expr::from(3), Expr::integer(3));
