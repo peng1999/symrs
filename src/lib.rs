@@ -15,5 +15,3 @@ extern crate lazy_static;
 extern crate itertools;
 
 pub mod sym;
-
-pub use sym::Expr;

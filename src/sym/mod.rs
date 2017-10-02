@@ -18,7 +18,7 @@ mod symbol;
 mod impls;
 pub use self::symbol::Symbol;
 
-use Expr::*;
+use self::Expr::*;
 
 /// An owned expression representation.
 #[derive(Debug, Clone, PartialEq)]
@@ -73,11 +73,22 @@ impl Expr {
             _ => false,
         }
     }
+
+    /// Get the priority rank when they are displayed. A lower number implys a higher priority.
+    pub fn priority_rank(&self) -> i32 {
+        match *self {
+            Integer(..) | Sym(..) | Approx(..) => 0,
+            Neg(..) => 1,
+            Product(..) | Ratio(..) => 2,
+            Sum(..) => 3,
+            Undefined => -1,
+        }
+    }
 }
 
 impl Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let fmt_f = |elt: &Expr, f: &mut FnMut(&Display) -> fmt::Result| if elt.is_primitive() {
+        let fmt_f = |elt: &Expr, f: &mut FnMut(&Display) -> fmt::Result| if elt.priority_rank() < self.priority_rank() {
             f(elt)
         } else {
             f(&format_args!("({})", elt))
@@ -87,6 +98,7 @@ impl Display for Expr {
             Integer(ref i) => write!(f, "{}", i),
             Sym(s) => write!(f, "{}", s),
             Approx(n) => write!(f, "{}", n),
+            Neg(ref e) => fmt_f(e, &mut |e| write!(f, "-{}", e)),
             Sum(ref args) => write!(f, "{}", args.into_iter().format_with(" + ", fmt_f)),
             Product(ref args) => write!(f, "{}", args.into_iter().format_with(" * ", fmt_f)),
             Ratio(ref n, ref d) => {

@@ -1,16 +1,11 @@
 extern crate symrs;
 
-use symrs::Expr;
+use symrs::sym::Symbol;
 
 fn main() {
-    let e = 1;
-    let b = e;
-    let x = Expr::symbol("x");
-    let ec = x + e + b;
-    let y = Expr::symbol("y");
-    let eb = ec * y;
-    let ed = 1 / eb.clone();
+    let x = Symbol::new("x");
+    let y = Symbol::new("y");
 
-    println!("eb : {}", eb);
-    println!("ed : {}", ed);
+    println!("eb : {}", 1 / (3 + x * y));
+    println!("ed : {}", x - 5 + 3 / y);
 }
