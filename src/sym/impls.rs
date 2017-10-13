@@ -49,18 +49,18 @@ macro_rules! op_impls {
             type Output = Expr;
             op_func_impl! {$trait_, T, @Take, @Take}
         }
-        impl<'a, T: Into<Expr> + Clone> $trait_<&'a T> for $lhs_t {
-            type Output = Expr;
-            op_func_impl! {$trait_, &T, @Take, @Ref}
-        }
+        // impl<'a, T: Into<Expr> + Clone> $trait_<&'a T> for $lhs_t {
+        //     type Output = Expr;
+        //     op_func_impl! {$trait_, &T, @Take, @Ref}
+        // }
         impl<'a, T: Into<Expr>> $trait_<T> for &'a $lhs_t {
             type Output = Expr;
             op_func_impl! {$trait_, T, @Ref, @Take}
         }
-        impl<'a,'b, T: Into<Expr> + Clone> $trait_<&'a T> for &'b $lhs_t {
-            type Output = Expr;
-            op_func_impl! {$trait_, &T, @Ref, @Ref}
-        }
+        // impl<'a,'b, T: Into<Expr> + Clone> $trait_<&'a T> for &'b $lhs_t {
+        //     type Output = Expr;
+        //     op_func_impl! {$trait_, &T, @Ref, @Ref}
+        // }
         op_impls! {$($rest)*}
     };
     // The form `Expr/Symbol op T`.
@@ -233,6 +233,11 @@ macro_rules! convs {
                     $crate::sym::Expr::$method(x)
                 }
             }
+            impl<'a> From<&'a $from_t> for Expr {
+                fn from(x: &$from_t) -> Expr {
+                    $crate::sym::Expr::$method(x.clone())
+                }
+            }
         )*
     }
 }
@@ -253,6 +258,12 @@ convs! {
 
     impl From<f32> for Expr using approximate;
     impl From<f64> for Expr using approximate;
+}
+
+impl<'a> From<&'a Expr> for Expr {
+    fn from(e: &Expr) -> Expr {
+        e.clone()
+    }
 }
 
 impl From<Symbol> for Expr {

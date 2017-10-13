@@ -15,6 +15,7 @@ pub enum Expr {
     /// Represent a float approximate value.
     Approx(f64),
 
+    /// Represent negative of a expression.
     Neg(Box<Expr>),
 
     /// Represent a sum of some expressions, like `x + y + z`.
@@ -23,6 +24,8 @@ pub enum Expr {
     Product(Vec<Expr>),
     /// Represent a ratio.
     Ratio(Box<Expr>, Box<Expr>),
+    /// Represent a power.
+    Pow(Box<Expr>, Box<Expr>),
 
     /// Represent an undefined value.
     Undefined,
@@ -45,13 +48,28 @@ impl Expr {
         Approx(f.into())
     }
 
+    /// Construct negative of an expression.
     pub fn negative<E: Into<Expr>>(e: E) -> Expr {
         Neg(Box::new(e.into()))
+    }
+
+    pub fn pow<E: Into<Expr>>(self, e: E) -> Expr {
+        Pow(Box::new(self), Box::new(e.into()))
     }
 }
 
 /// Classify a `Expr`.
 impl Expr {
+    /// Check if the expression is a primitive.
+    /// # Examples
+    /// ```
+    /// use symrs::sym::{Expr, Symbol};
+    ///
+    /// assert_eq!(Expr::integer(1).is_primitive(), true);
+    /// assert_eq!(Expr::approximate(1).is_primitive(), true);
+    /// let x = Symbol::new("x");
+    /// assert_eq!((x + 1).is_primitive(), false);
+    /// ```
     pub fn is_primitive(&self) -> bool {
         match *self {
             Integer(_) | Sym(_) | Approx(_) => true,
@@ -62,11 +80,11 @@ impl Expr {
     /// Get the priority rank when they are displayed. A lower number implys a higher priority.
     pub fn priority_rank(&self) -> i32 {
         match *self {
-            Integer(..) | Sym(..) | Approx(..) => 0,
-            Neg(..) => 1,
-            Product(..) | Ratio(..) => 2,
-            Sum(..) => 3,
-            Undefined => -1,
+            Integer(..) | Sym(..) | Approx(..) | Undefined => 0,
+            Pow(..) => 2,
+            Neg(..) => 3,
+            Product(..) | Ratio(..) => 4,
+            Sum(..) => 5,
         }
     }
 }
@@ -82,6 +100,7 @@ impl Display for Expr {
         };
 
         match *self {
+            Undefined => write!(f, "Undefined"),
             Integer(ref i) => write!(f, "{}", i),
             Sym(s) => write!(f, "{}", s),
             Approx(n) => write!(f, "{}", n),
@@ -94,8 +113,12 @@ impl Display for Expr {
                     &mut |n_| fmt_f(d, &mut |d_| write!(f, "{} / {}", n_, d_)),
                 )
             }
-            _ => unimplemented!(),
+            Pow(ref e, ref p) => {
+                fmt_f(
+                    e,
+                    &mut |e_| fmt_f(p, &mut |p_| write!(f, "{} ^ {}", e_, p_)),
+                )
+            },
         }
     }
 }
-
