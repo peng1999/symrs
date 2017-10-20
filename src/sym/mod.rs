@@ -1,6 +1,28 @@
 //! Definition of the expression representation.
 //!
-//! You can use operators directly:
+//! # Creating a `Expr`
+//!
+//! `Expr` has implemented the `From` trait, so primitive values can be converted directly.
+//! 
+//! ```
+//! use symrs::sym::{Expr, Symbol};
+//!
+//! let one = Expr::from(1);
+//! let x: Expr = Symbol::new("x").into();
+//! let about_half: Expr = 0.5f64.into();
+//! ```
+//!
+//! Another way is to use a specified constructor.
+//!
+//! ```
+//! use symrs::sym::{Expr, Symbol};
+//!
+//! let x = Expr::symbol("x");
+//! let about_one = Expr::approximate(1);
+//! let x_y = Expr::pow(x, about_one);
+//! ```
+//!
+//! You can also use operators directly:
 //!
 //! ```
 //! use symrs::sym::{Expr, Symbol};
