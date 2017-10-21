@@ -3,7 +3,7 @@
 //! # Creating a `Expr`
 //!
 //! `Expr` has implemented the `From` trait, so primitive values can be converted directly.
-//! 
+//!
 //! ```
 //! use symrs::sym::{Expr, Symbol};
 //!
@@ -30,6 +30,17 @@
 //! let x = Symbol::new("x");
 //! let b = x + 1;
 //! assert_eq!(b, Expr::Sum(vec![Expr::Sym(x), Expr::integer(1)]));
+//! ```
+//!
+//! Sometimes rustc can't determine which impl to use when dealing with number literal,
+//! in that case you should add a type specifier.
+//!
+//! ```
+//! use symrs::sym::{Expr, Symbol};
+//!
+//! let x = Symbol::new("x");
+//! // use `1i32` rather than `1`
+//! let e = 1i32 + x;
 //! ```
 
 

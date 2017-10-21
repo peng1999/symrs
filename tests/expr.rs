@@ -25,13 +25,32 @@ fn construct_expr() {
 #[test]
 fn display_expr() {
     let int = Expr::integer(4);
-    assert_eq!(format!("{}", int), "4".to_string());
+    assert_eq!(format!("{}", int), "4");
 
     let sym = Expr::symbol("x");
-    assert_eq!(format!("{}", sym), "x".to_string());
+    assert_eq!(format!("{}", sym), "x");
 
     let app = Expr::approximate(1.32f64);
-    assert_eq!(format!("{}", app), "1.32".to_string());
+    assert_eq!(format!("{}", app), "1.32");
+
+    let plus = int + sym;
+    assert_eq!(format!("{}", plus), "4 + x");
+
+    let product = app * plus;
+    assert_eq!(format!("{}", product), "1.32 * (4 + x)");
+}
+
+#[test]
+fn equality() {
+    let x = Symbol::new("x");
+
+    assert_eq!(Expr::symbol("x"), x.into());
+    assert_eq!(Expr::Sym(x), x.into());
+    assert_ne!(Expr::symbol("y"), x.into());
+    assert_eq!(Expr::integer(9), 9.into());
+    assert_ne!(Expr::integer(9), 10.into());
+
+    assert_eq!(x - 1, x - 1);
 }
 
 #[test]
@@ -47,41 +66,6 @@ fn classify_expr() {
     assert_eq!((x - 3).is_primitive(), false);
     assert_eq!((x + 3).is_primitive(), false);
 
-    // rank works.
-    let i = Expr::integer(3);
-    let s = Expr::symbol("y");
-    let approx = Expr::approximate(3.4);
-
-    let pow = Expr::pow(i.clone(), 5);
-
-    let neg = Expr::negative(x);
-
-    let mul = &neg * 4;
-    let div = &s / &i;
-
-    let add = &i + &div;
-    let sub = &approx - &i;
-
-    assert_eq!(i.priority_rank(), 0);
-    assert_eq!(s.priority_rank(), 0);
-    assert_eq!(approx.priority_rank(), 0);
-    assert_eq!(Expr::Undefined.priority_rank(), 0);
-
-    assert!(i.priority_rank() < pow.priority_rank());
-    assert!(s.priority_rank() < pow.priority_rank());
-    assert!(approx.priority_rank() < pow.priority_rank());
-
-    assert!(pow.priority_rank() < neg.priority_rank());
-
-    assert!(neg.priority_rank() < mul.priority_rank());
-    assert!(neg.priority_rank() < div.priority_rank());
-
-    assert_eq!(mul.priority_rank(), div.priority_rank());
-
-    assert!(mul.priority_rank() < add.priority_rank());
-    assert!(mul.priority_rank() < sub.priority_rank());
-
-    assert_eq!(add.priority_rank(), sub.priority_rank());
 }
 
 #[test]
@@ -98,6 +82,8 @@ fn convert_from() {
     assert_eq!(Expr::from(3.5554f32), Expr::approximate(3.5554f32));
 }
 
+// rustfmt can't process the aligned comments correctly, so let it skip the function.
+#[cfg_attr(rustfmt, rustfmt_skip)]
 #[test]
 fn operators_works() {
     let x = Symbol::new("x");

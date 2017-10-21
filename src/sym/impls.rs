@@ -22,20 +22,29 @@ macro_rules! op_func_impl {
     // Mul: self * rhs
     (Mul, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn mul(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Product(vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()])
+            $crate::sym::Expr::Product(vec![
+                fwd_clone!(@$lm self).into(),
+                fwd_clone!(@$rm rhs).into()
+            ])
         }
     };
     // Div: self / rhs
     (Div, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn div(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Ratio(Box::new(fwd_clone!(@$lm self).into()), Box::new(fwd_clone!(@$rm rhs).into()))
+            $crate::sym::Expr::Ratio(
+                Box::new(fwd_clone!(@$lm self).into()),
+                Box::new(fwd_clone!(@$rm rhs).into())
+            )
         }
     };
     // There isn't a minus constructor, should add a negative.
     // Sub: self + (-rhs)
     (Sub, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn sub(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Sum(vec![fwd_clone!(@$lm self).into(), $crate::sym::Expr::negative(fwd_clone!(@$rm rhs))])
+            $crate::sym::Expr::Sum(vec![
+                fwd_clone!(@$lm self).into(),
+                $crate::sym::Expr::negative(fwd_clone!(@$rm rhs))
+            ])
         }
     };
 }
