@@ -53,6 +53,7 @@ impl Expr {
         Neg(Box::new(e.into()))
     }
 
+    /// Construct a exponentiation expression.
     pub fn pow<E: Into<Expr>>(self, e: E) -> Expr {
         Pow(Box::new(self), Box::new(e.into()))
     }

@@ -15,7 +15,7 @@
 //! Another way is to use a specified constructor.
 //!
 //! ```
-//! use symrs::sym::{Expr, Symbol};
+//! use symrs::sym::Expr;
 //!
 //! let x = Expr::symbol("x");
 //! let about_one = Expr::approximate(1);

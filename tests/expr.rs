@@ -52,6 +52,8 @@ fn classify_expr() {
     let s = Expr::symbol("y");
     let approx = Expr::approximate(3.4);
 
+    let pow = Expr::pow(i.clone(), 5);
+
     let neg = Expr::negative(x);
 
     let mul = &neg * 4;
@@ -63,10 +65,13 @@ fn classify_expr() {
     assert_eq!(i.priority_rank(), 0);
     assert_eq!(s.priority_rank(), 0);
     assert_eq!(approx.priority_rank(), 0);
+    assert_eq!(Expr::Undefined.priority_rank(), 0);
 
-    assert!(i.priority_rank() < neg.priority_rank());
-    assert!(s.priority_rank() < neg.priority_rank());
-    assert!(approx.priority_rank() < neg.priority_rank());
+    assert!(i.priority_rank() < pow.priority_rank());
+    assert!(s.priority_rank() < pow.priority_rank());
+    assert!(approx.priority_rank() < pow.priority_rank());
+
+    assert!(pow.priority_rank() < neg.priority_rank());
 
     assert!(neg.priority_rank() < mul.priority_rank());
     assert!(neg.priority_rank() < div.priority_rank());
