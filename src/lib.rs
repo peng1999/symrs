@@ -13,5 +13,12 @@ extern crate symtern;
 #[macro_use]
 extern crate lazy_static;
 extern crate itertools;
+#[macro_use]
+extern crate nom;
+
+#[cfg(test)]
+#[macro_use]
+extern crate nom_test_helpers;
 
 pub mod sym;
+pub mod par;
