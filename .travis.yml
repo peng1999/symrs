@@ -3,7 +3,6 @@ language: rust
 rust:
     - stable
     - nightly
-    - 1.16.0
     - 1.15.0 # lowest supported version
 
 script:
