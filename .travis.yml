@@ -6,7 +6,7 @@ rust:
     - 1.15.0 # lowest supported version
 
 env:
-    - FEATURES="--features='parser'"
+    - FEATURES=--features="parser"
 
 matrix:
     include:
