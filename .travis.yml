@@ -5,9 +5,17 @@ rust:
     - nightly
     - 1.15.0 # lowest supported version
 
+env:
+    - FEATURES="--features='parser'"
+
+matrix:
+    include:
+        rust: nightly
+        env: FEATURES="--all-features"
+
 script:
     - cargo build --release --verbose
-    - cargo test --all-features --verbose
+    - cargo test $FEATURES --verbose
 
 cache: cargo
 
