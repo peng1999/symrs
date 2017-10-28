@@ -13,12 +13,24 @@ extern crate symtern;
 #[macro_use]
 extern crate lazy_static;
 extern crate itertools;
-#[macro_use]
-extern crate nom;
-
-#[cfg(test)]
-#[macro_use]
-extern crate nom_test_helpers;
 
 pub mod sym;
-pub mod par;
+
+#[macro_use]
+extern crate cfg_if;
+
+cfg_if! { if #[cfg(feature = "parser")] {
+    #[macro_use]
+    extern crate nom;
+
+    cfg_if! { if #[cfg(test)] {
+        #[macro_use]
+        extern crate nom_test_helpers;
+        extern crate float_cmp;
+
+        #[macro_use]
+        mod test_util;
+    }}
+
+    pub mod par;
+}}

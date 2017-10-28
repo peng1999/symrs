@@ -6,11 +6,17 @@ description = "Symbolic computation in Rust"
 repository = "https://github.com/peng1999/symrs"
 
 [dependencies]
+cfg-if = "0.1"
 lazy_static = "0.2"
 num = "0.1"
 symtern = "0.1"
 itertools = "0.7"
-nom = "3.2"
+nom = {version = "3.2", optional = true}
 
 [dev-dependencies]
 nom-test-helpers = "2"
+float-cmp = "0.2"
+
+[features]
+parser = ["nom"]
+nightly = ["parser", "nom/nightly"]
