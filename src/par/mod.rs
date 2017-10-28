@@ -89,7 +89,7 @@ named!(product<&str, Expr>, do_parse!(
                            Expr::Product(f)
                        },
                        e => Expr::Product(vec![e, val]),
-                   }
+                   },
                    // must be '/'
                    _ => Expr::Ratio(Box::new(acc), Box::new(val)),
                }
