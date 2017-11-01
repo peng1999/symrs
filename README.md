@@ -3,9 +3,29 @@
 
 Symbolic computation in Rust
 
-Note: THIS PROJECT IS UNDER DEVELOPEMENT AND HASN'T GOT A BASIC FUNCTION.
+NOTE: THIS PROJECT IS STILL A PROOF-OF-CONCEPT, AND NOT READY FOR PRACTICAL USE.
 
-# License
+## Usage
+
+To use `symrs`, include it in your `Cargo.toml`:
+
+```toml
+[dependencies.symrs]
+git = "https://github.com/peng1999/symrs.git"
+version = "0.*"
+```
+
+Then include it in your code:
+
+```rust
+extern crate symrs;
+```
+
+There are a few compilation features:
+
+- `parser`: includes a parser library.
+
+## License
 
 symrs is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0), with portions covered by various BSD-like licenses.
 
