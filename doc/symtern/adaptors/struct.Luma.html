@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Luma` struct in crate `symtern`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Luma">
+
+    <title>symtern::adaptors::Luma - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct Luma</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>symtern</a>::<wbr><a href='index.html'>adaptors</a></p><script>window.sidebarCurrent = {name: 'Luma', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>symtern</a>::<wbr><a href='index.html'>adaptors</a>::<wbr><a class="struct" href=''>Luma</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#98-100' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Luma&lt;W&gt; { /* fields omitted */ }</pre><div class='docblock'><p>&quot;Lifetime-safe&quot; interner adaptor.</p>
+
+<p>This adaptor&#39;s symbols are treated as references to their source pool
+&mdash; which, thanks to Rust&#39;s borrow-checker, prevents us from dropping
+the pool before any of its symbols.</p>
+
+<p>To achieve this, we utilize interior mutability via <code>RefCell</code> (which allows
+us to intern more than one value at a time).  Note that this is <em>not</em>
+a zero-cost abstraction: the price we pay for interior mutability is
+run-time borrow-checking!  More specifically, certain borrow errors that
+would normally be caught at compile-time...</p>
+
+<div class='information'><div class='tooltip compile_fail'>⚠<span class='tooltiptext'>This code doesn't compile so be extra careful!</span></div></div><pre class="rust rust-example-rendered compile_fail">
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">Pool</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">Pool</span>::<span class="op">&lt;</span><span class="ident">str</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">new</span>();
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;foo&quot;</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to intern a value&quot;</span>);
+<span class="kw">let</span> <span class="ident">foo</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">resolve</span>(<span class="ident">x</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to resolve the value we just interned&quot;</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="ident">foo</span>);
+
+<span class="kw">let</span> _ <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;bar&quot;</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to intern a value&quot;</span>); <span class="comment">//~ ERROR cannot borrow `pool` as mutable because it is also borrowed as immutable</span></pre>
+
+<p>...become run-time errors when using the <code>Luma</code> adaptor:</p>
+
+<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">Pool</span>;
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">adaptors</span>::<span class="ident">Luma</span>;
+
+<span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">Luma</span>::<span class="ident">from</span>(<span class="ident">Pool</span>::<span class="op">&lt;</span><span class="ident">str</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">new</span>());
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;foo&quot;</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to intern a value&quot;</span>);
+<span class="kw">let</span> <span class="ident">foo</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">resolve</span>(<span class="ident">x</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to resolve the value we just interned&quot;</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;foo&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">foo</span>);
+
+<span class="kw">let</span> _ <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;bar&quot;</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to intern a value&quot;</span>); <span class="comment">//~ PANIC already borrowed: BorrowMutError</span></pre>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;W&gt; <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#102-109' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>() -&gt; Self <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;W: <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a>,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#104-108' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Create a new, empty <code>Luma</code> instance.</p>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Default' class='impl'><span class='in-band'><code>impl&lt;W:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt;</code><a href='#impl-Default' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#97' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#97' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns the &quot;default value&quot; for a type. <a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Read more</a></p>
+</div></div><h3 id='impl-From&lt;W&gt;' class='impl'><span class='in-band'><code>impl&lt;W&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html" title="trait core::convert::From">From</a>&lt;W&gt; for <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt;</code><a href='#impl-From&lt;W&gt;' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#111-115' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.from' class="method"><span id='from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from' class='fnname'>from</a>(w: W) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs the conversion.</p>
+</div></div><h3 id='impl-Intern' class='impl'><span class='in-band'><code>impl&lt;'a, W, BS, BI:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; <a class="trait" href="../../symtern/traits/trait.Intern.html" title="trait symtern::traits::Intern">Intern</a> for &amp;'a <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'b mut </a>W: <a class="trait" href="../../symtern/traits/trait.Intern.html" title="trait symtern::traits::Intern">Intern</a>&lt;Symbol = BS, Input = BI&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;BS: Symbol + <a class="trait" href="../../symtern/traits/trait.Symbol.html" title="trait symtern::traits::Symbol">Symbol</a>,&nbsp;</span></code><a href='#impl-Intern' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#117-128' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Input' class="type"><span id='Input.t' class='invisible'><code>type <a href='../../symtern/traits/trait.Intern.html#associatedtype.Input' class="type">Input</a> = BI</code></span></h4>
+<div class='docblock'><p>Type of value accepted by <code>intern</code>.</p>
+</div><h4 id='associatedtype.Symbol' class="type"><span id='Symbol.t' class='invisible'><code>type <a href='../../symtern/traits/trait.Intern.html#associatedtype.Symbol' class="type">Symbol</a> = <a class="struct" href="../../symtern/adaptors/struct.LumaSym.html" title="struct symtern::adaptors::LumaSym">Sym</a>&lt;'a, BS&gt;</code></span></h4>
+<div class='docblock'><p>Type used to represent interned values.</p>
+</div><h4 id='method.intern' class="method"><span id='intern.v' class='invisible'><code>fn <a href='../../symtern/traits/trait.Intern.html#tymethod.intern' class='fnname'>intern</a>(self, input: &amp;Self::<a class="type" href="../../symtern/traits/trait.Intern.html#associatedtype.Input" title="type symtern::traits::Intern::Input">Input</a>) -&gt; <a class="type" href="../../symtern/type.Result.html" title="type symtern::Result">Result</a>&lt;Self::<a class="type" href="../../symtern/traits/trait.Intern.html#associatedtype.Symbol" title="type symtern::traits::Intern::Symbol">Symbol</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#124-127' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Fetch the symbol that corresponds to the given value.  If the value does not map to any existing symbol, create and return a new one. This method may return an error if the interner encounters any error while storing the value. <a href="../../symtern/traits/trait.Intern.html#tymethod.intern">Read more</a></p>
+</div></div><h3 id='impl-Resolve' class='impl'><span class='in-band'><code>impl&lt;'a, W, BI, BO:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; <a class="trait" href="../../symtern/traits/trait.Resolve.html" title="trait symtern::traits::Resolve">Resolve</a> for &amp;'a <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'b </a>W: <a class="trait" href="../../symtern/traits/trait.Resolve.html" title="trait symtern::traits::Resolve">Resolve</a>&lt;Input = BI, Output = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'b </a>BO&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;BI: Symbol + <a class="trait" href="../../symtern/traits/trait.Symbol.html" title="trait symtern::traits::Symbol">Symbol</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;BO: 'a,&nbsp;</span></code><a href='#impl-Resolve' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#130-140' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Input-1' class="type"><span id='Input.t-1' class='invisible'><code>type <a href='../../symtern/traits/trait.Resolve.html#associatedtype.Input' class="type">Input</a> = <a class="struct" href="../../symtern/adaptors/struct.LumaSym.html" title="struct symtern::adaptors::LumaSym">Sym</a>&lt;'a, BI&gt;</code></span></h4>
+<div class='docblock'><p>Type passed to the <code>resolve</code> method.</p>
+</div><h4 id='associatedtype.Output' class="type"><span id='Output.t' class='invisible'><code>type <a href='../../symtern/traits/trait.Resolve.html#associatedtype.Output' class="type">Output</a> = <a class="struct" href="https://doc.rust-lang.org/nightly/core/cell/struct.Ref.html" title="struct core::cell::Ref">Ref</a>&lt;'a, BO&gt;</code></span></h4>
+<div class='docblock'><p>Type stored by the interner and made available with <code>resolve</code>.</p>
+</div><h4 id='method.resolve' class="method"><span id='resolve.v' class='invisible'><code>fn <a href='../../symtern/traits/trait.Resolve.html#tymethod.resolve' class='fnname'>resolve</a>(self, sym: Self::<a class="type" href="../../symtern/traits/trait.Resolve.html#associatedtype.Input" title="type symtern::traits::Resolve::Input">Input</a>) -&gt; <a class="type" href="../../symtern/type.Result.html" title="type symtern::Result">Result</a>&lt;Self::<a class="type" href="../../symtern/traits/trait.Resolve.html#associatedtype.Output" title="type symtern::traits::Resolve::Output">Output</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#137-139' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Look up and return a reference to the value represented by a symbol, or an error if the symbol was not found. <a href="../../symtern/traits/trait.Resolve.html#tymethod.resolve">Read more</a></p>
+</div></div><h3 id='impl-Len' class='impl'><span class='in-band'><code>impl&lt;W&gt; <a class="trait" href="../../symtern/traits/trait.Len.html" title="trait symtern::traits::Len">Len</a> for <a class="struct" href="../../symtern/adaptors/struct.Luma.html" title="struct symtern::adaptors::Luma">Luma</a>&lt;W&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;W: <a class="trait" href="../../symtern/traits/trait.Len.html" title="trait symtern::traits::Len">Len</a>,&nbsp;</span></code><a href='#impl-Len' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#142-152' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.len' class="method"><span id='len.v' class='invisible'><code>fn <a href='../../symtern/traits/trait.Len.html#tymethod.len' class='fnname'>len</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#143-145' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Fetch the number of values contained in the interner.</p>
+</div><h4 id='method.is_full' class="method"><span id='is_full.v' class='invisible'><code>fn <a href='../../symtern/traits/trait.Len.html#tymethod.is_full' class='fnname'>is_full</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#146-148' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Check if the number of interned symbols has reached the maximum allowed. <a href="../../symtern/traits/trait.Len.html#tymethod.is_full">Read more</a></p>
+</div><h4 id='method.is_empty' class="method"><span id='is_empty.v' class='invisible'><code>fn <a href='../../symtern/traits/trait.Len.html#tymethod.is_empty' class='fnname'>is_empty</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/symtern/adaptors/luma.rs.html#149-151' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Check if the interner is &quot;empty&quot;, i.e. has zero stored values.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "symtern";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `sym` mod in crate `symrs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, sym">
+
+    <title>symrs::sym - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Module sym</p><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></div><p class='location'><a href='../index.html'>symrs</a></p><script>window.sidebarCurrent = {name: 'sym', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>symrs</a>::<wbr><a class="mod" href=''>sym</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/symrs/sym/mod.rs.html#1-52' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Definition of the expression representation.</p>
+
+<h1 id='creating-a-expr' class='section-header'><a href='#creating-a-expr'>Creating a <code>Expr</code></a></h1>
+<p><code>Expr</code> has implemented the <code>From</code> trait, so primitive values can be converted directly.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">symrs</span>::<span class="ident">sym</span>::{<span class="ident">Expr</span>, <span class="ident">Symbol</span>};
+
+<span class="kw">let</span> <span class="ident">one</span> <span class="op">=</span> <span class="ident">Expr</span>::<span class="ident">from</span>(<span class="number">1</span>);
+<span class="kw">let</span> <span class="ident">x</span>: <span class="ident">Expr</span> <span class="op">=</span> <span class="ident">Symbol</span>::<span class="ident">new</span>(<span class="string">&quot;x&quot;</span>).<span class="ident">into</span>();
+<span class="kw">let</span> <span class="ident">about_half</span>: <span class="ident">Expr</span> <span class="op">=</span> <span class="number">0.5f64</span>.<span class="ident">into</span>();</pre>
+
+<p>Another way is to use a specified constructor.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">symrs</span>::<span class="ident">sym</span>::<span class="ident">Expr</span>;
+
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">Expr</span>::<span class="ident">symbol</span>(<span class="string">&quot;x&quot;</span>);
+<span class="kw">let</span> <span class="ident">about_one</span> <span class="op">=</span> <span class="ident">Expr</span>::<span class="ident">approximate</span>(<span class="number">1</span>);
+<span class="kw">let</span> <span class="ident">x_y</span> <span class="op">=</span> <span class="ident">Expr</span>::<span class="ident">pow</span>(<span class="ident">x</span>, <span class="ident">about_one</span>);</pre>
+
+<p>You can also use operators directly:</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">symrs</span>::<span class="ident">sym</span>::{<span class="ident">Expr</span>, <span class="ident">Symbol</span>};
+
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">Symbol</span>::<span class="ident">new</span>(<span class="string">&quot;x&quot;</span>);
+<span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">x</span> <span class="op">+</span> <span class="number">1</span>;
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">b</span>, <span class="ident">Expr</span>::<span class="ident">Sum</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">Expr</span>::<span class="ident">Sym</span>(<span class="ident">x</span>), <span class="ident">Expr</span>::<span class="ident">integer</span>(<span class="number">1</span>)]));</pre>
+
+<p>Sometimes rustc can&#39;t determine which impl to use when dealing with number literal,
+in that case you should add a type specifier.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">symrs</span>::<span class="ident">sym</span>::{<span class="ident">Expr</span>, <span class="ident">Symbol</span>};
+
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">Symbol</span>::<span class="ident">new</span>(<span class="string">&quot;x&quot;</span>);
+<span class="comment">// use `1i32` rather than `1`</span>
+<span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="number">1i32</span> <span class="op">+</span> <span class="ident">x</span>;</pre>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Symbol.html"
+                                  title='struct symrs::sym::Symbol'>Symbol</a></td>
+                           <td class='docblock-short'>
+                                <p>The symbol type.</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Expr.html"
+                                  title='enum symrs::sym::Expr'>Expr</a></td>
+                           <td class='docblock-short'>
+                                <p>An owned expression representation.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "symrs";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

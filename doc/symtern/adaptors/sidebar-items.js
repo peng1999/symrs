@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Inline","Interner adaptor optimized for short strings."],["InlineSym","Symbol type used by the `Inline` adaptor."],["Luma","\"Lifetime-safe\" interner adaptor."],["LumaSym","Symbol type used by the `Luma` adaptor."]]});

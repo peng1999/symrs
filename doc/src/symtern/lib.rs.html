@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `/home/pgw/.cargo/registry/src/github.com-1ecc6299db9ec823/symtern-0.1.0/src/lib.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>lib.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc source">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+</pre><pre class="rust ">
+<span class="comment">// Copyright (C) 2016 Symtern Project Contributors</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-Apache</span>
+<span class="comment">// or http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT</span>
+<span class="comment">// license &lt;LICENSE-MIT or http://opensource.org/licenses/MIT&gt;,</span>
+<span class="comment">// at your option. This file may not be copied, modified, or</span>
+<span class="comment">// distributed except according to those terms.</span>
+<span class="doccomment">//! # Fast general-purpose interners for every use case</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Symtern provides a high-performance interner implementation applicable to</span>
+<span class="doccomment">//! most use cases, and a small set of adaptors that add additional</span>
+<span class="doccomment">//! functionality on top of this base implementation.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## Trait-guided implementation</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Symtern&#39;s types are implemented around a core set of traits that define the</span>
+<span class="doccomment">//! ways you can interact with an interner; these traits are carefully designed</span>
+<span class="doccomment">//! to avoid restricting the kinds of adaptors possible.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## Interners and adaptors</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The base interner, [`Pool`], is generic over the type of interned values,</span>
+<span class="doccomment">//! and can be configured to use any of Rust&#39;s numeric primitives for symbol</span>
+<span class="doccomment">//! IDs.  It is the recommended interner for most purposes.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```rust file=&quot;examples/intro.rs&quot; id=&quot;basic&quot;</span>
+<span class="doccomment">//! // Import Symtern&#39;s traits, which allow us to use each interner the same way</span>
+<span class="doccomment">//! // regardless of the underlying implementation.</span>
+<span class="doccomment">//! use symtern::prelude::*;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! // Create a new pool that accepts `&amp;str` arguments to `intern`, and uses</span>
+<span class="doccomment">//! // `u8` as the backing representation for its symbol type.</span>
+<span class="doccomment">//! let mut pool = symtern::Pool::&lt;str,u8&gt;::new();</span>
+<span class="doccomment">//! if let (Ok(hello), Ok(world)) = (pool.intern(&quot;Hello&quot;), pool.intern(&quot;World&quot;)) {</span>
+<span class="doccomment">//!     assert!(hello != world);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     assert_eq!(hello, hello);</span>
+<span class="doccomment">//!     assert_eq!(Ok(hello), pool.intern(&quot;Hello&quot;));</span>
+<span class="doccomment">//!     assert_eq!(Ok(&quot;Hello&quot;), pool.resolve(hello));</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     assert_eq!(world, world);</span>
+<span class="doccomment">//!     assert_eq!(Ok(world), pool.intern(&quot;World&quot;));</span>
+<span class="doccomment">//!     assert_eq!(Ok(&quot;World&quot;), pool.resolve(world));</span>
+<span class="doccomment">//! }</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ### Adaptors</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! For an overview of the available adaptors, see the [`adaptors` module].</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## More examples</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [Symbol types](traits/trait.Symbol.html) are `Copy`:  they can be passed by</span>
+<span class="doccomment">//! value without resulting in a move.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```rust file=&quot;examples/symbols-are-copy.rs&quot; preserve=[&quot;main&quot;]</span>
+<span class="doccomment">//! use symtern::prelude::*;</span>
+<span class="doccomment">//! use symtern::Pool;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! /// Take ownership of a value, consuming it.</span>
+<span class="doccomment">//! fn consume&lt;T&gt;(_: T) {}</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! let mut pool = Pool::&lt;str, u32&gt;::new();</span>
+<span class="doccomment">//! let sym = pool.intern(&quot;xyz&quot;).unwrap();</span>
+<span class="doccomment">//! consume(sym);</span>
+<span class="doccomment">//! println!(&quot;The symbol is still valid: {:?}&quot;, pool.resolve(sym));</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## Caveat Emptor</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Because of the way symbol types in this crate are represented, a symbol</span>
+<span class="doccomment">//! obtained by calling `intern` on one `Pool` instance can easily be identical</span>
+<span class="doccomment">//! to a symbol obtained from a different instance of the same `Pool` type</span>
+<span class="doccomment">//! &amp;mdash; and will resolve without error (albeit incorrectly) on that</span>
+<span class="doccomment">//! other pool!</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Present-day Rust affords us no easy way to fix this without incurring</span>
+<span class="doccomment">//! additional runtime costs; see the discussion</span>
+<span class="doccomment">//! [here](traits/index.html#strikechoosingstrike-chasing-our-guarantees) for</span>
+<span class="doccomment">//! more information.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! When the crate is compiled in debug mode, an additional field is added to</span>
+<span class="doccomment">//! all symbol instances to allow run-time detection of attempts to resolve</span>
+<span class="doccomment">//! a symbol on the wrong resolver, and any such attempt will trigger a panic.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [`Pool`]: struct.Pool.html</span>
+<span class="doccomment">//! [`adaptors` module]: adaptors/index.html</span>
+<span class="doccomment">//! [`traits` module]: traits/index.html</span>
+<span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">num_traits</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;fnv&quot;</span>)]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">fnv</span>;
+
+<span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">mod</span> <span class="ident">sym</span>;
+<span class="kw">mod</span> <span class="ident">core</span>;
+<span class="kw">mod</span> <span class="ident">error</span>;
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">traits</span>;
+<span class="kw">mod</span> <span class="ident">basic</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">adaptors</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">prelude</span>;
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::{<span class="prelude-ty">Result</span>, <span class="ident">Error</span>, <span class="ident">ErrorKind</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">basic</span>::{<span class="ident">Pool</span>, <span class="ident">Sym</span>};
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "symtern";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

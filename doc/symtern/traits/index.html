@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `traits` mod in crate `symtern`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, traits">
+
+    <title>symtern::traits - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Module traits</p><div class="block items"><ul><li><a href="#traits">Traits</a></li></ul></div><p class='location'><a href='../index.html'>symtern</a></p><script>window.sidebarCurrent = {name: 'traits', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>symtern</a>::<wbr><a class="mod" href=''>traits</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/symtern/traits.rs.html#8-267' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Traits that define the interface for all string-interning implementations.</p>
+
+<p>Interners are used to provide trivially-comparable stand-ins for values
+that are not trivially comparable, and to later retrieve the value
+represented by each stand-in.  (If you don&#39;t need the original value after
+interning, you should probably be using hash functions instead.)</p>
+
+<h2 id='terminology' class='section-header'><a href='#terminology'>Terminology</a></h2>
+<p>This library uses the term &quot;symbol&quot; to refer to a stand-in value.
+Interners, which both intern and resolve symbols, are called pools (in
+reference to a &quot;pool&quot; of symbols) when discussing concrete
+interner/resolver implementations.</p>
+
+<h2 id='symbol-creation' class='section-header'><a href='#symbol-creation'>Symbol creation</a></h2>
+<p>Symbols are created by calling <a href="trait.Intern.html"><code>intern</code></a> on <a href="trait.Intern.html"><code>Intern</code></a> implementations.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="comment">// Nearly all functionality is in the trait implementations, so we simply</span>
+<span class="comment">// glob-import the traits.</span>
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">Pool</span>;
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">adaptors</span>::<span class="ident">Inline</span>;
+
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">basic_pool</span> <span class="op">=</span> <span class="ident">Pool</span>::<span class="op">&lt;</span><span class="ident">str</span>,<span class="ident">u16</span><span class="op">&gt;</span>::<span class="ident">new</span>();
+<span class="kw">let</span> <span class="ident">cat</span> <span class="op">=</span> <span class="ident">basic_pool</span>.<span class="ident">intern</span>(<span class="string">&quot;Kibbles&quot;</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to intern the cat&quot;</span>);
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inline_pool</span> <span class="op">=</span> <span class="ident">Inline</span>::<span class="op">&lt;</span><span class="ident">Pool</span><span class="op">&lt;</span><span class="ident">str</span>, <span class="ident">u64</span><span class="op">&gt;&gt;</span>::<span class="ident">new</span>();
+<span class="kw">let</span> <span class="ident">dog</span> <span class="op">=</span> <span class="ident">inline_pool</span>.<span class="ident">intern</span>(<span class="string">&quot;Fido&quot;</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to intern the dog&quot;</span>);</pre>
+
+<h2 id='symbol-resolution' class='section-header'><a href='#symbol-resolution'>Symbol resolution</a></h2>
+<p>Symbols are resolved using the <a href="trait.Resolve.html#tymethod.resolve"><code>Resolve</code></a> trait.  In many cases you can
+simply pass the symbol to the interner&#39;s <a href="trait.Resolve.html#tymethod.resolve"><code>resolve</code></a> method by value:</p>
+
+<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="string">&quot;Kibbles&quot;</span>), <span class="ident">basic_pool</span>.<span class="ident">resolve</span>(<span class="ident">cat</span>));</pre>
+
+<p>Some <code>Resolve</code> implementations, however, require a <em>reference</em> to
+the symbol:</p>
+
+<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="string">&quot;Fido&quot;</span>), <span class="ident">inline_pool</span>.<span class="ident">resolve</span>(<span class="kw-2">&amp;</span><span class="ident">dog</span>));</pre>
+
+<p>You can tell the difference by inspect the <a href="trait.Resolve.html#associatedtype.Input"><code>Input</code></a>
+associated type on each <a href="trait.Resolve.html#tymethod.resolve"><code>Resolve</code></a> implementation.</p>
+
+<h2 id='strikechoosingstrike-chasing-our-guarantees' class='section-header'><a href='#strikechoosingstrike-chasing-our-guarantees'><strike>Choosing</strike> Chasing our Guarantees</a></h2>
+<p>Few people enjoy dealing with the fact that software is fallible and
+operations may fail, but doing so is often a necessary chore.  Sometimes,
+however, we can eliminate potential error conditions through careful design
+of an API.  How would we go about doing this for an interner library like
+Symtern?  We&#39;d like to require that</p>
+
+<ol>
+<li><p>interning never fails, i.e. an interner grows as necessary to hold its
+ values;</p></li>
+<li><p>resolution never fails:</p>
+
+<p>a. any attempt to resolve a symbol using an interner that did not
+   create it results in a compile-time error; and</p>
+
+<p>b. interners outlive or contain a copy of the original value, and outlive
+   the created stand-in.</p></li>
+</ol>
+
+<p>The first condition is untenable for the library&#39;s expected use case in
+combination with practical concerns of performance and efficiency, since
+a progressively larger address space will require progressively larger
+representations for symbols.  We <em>must</em> handle the address-space-exhausted
+condition &mdash; especially if our symbols are 32 bits or fewer.</p>
+
+<p>There is no way to enforce the second condition (2a) in the general case
+using features available in present-day Rust.  We can restrict which <em>type</em>
+of wrong interner one can attempt to resolve the symbol on, but without
+something like <a href="http://danielwestheide.com/blog/2013/02/13/the-neophytes-guide-to-scala-part-13-path-dependent-types.html">Scala&#39;s path-dependent types</a> we can&#39;t generally enforce
+the condition using compile-time checks.<a href="#footnote-1">¹</a> What&#39;s worse, we
+can&#39;t even promise zero-cost run-time checks!</p>
+
+<p>The third condition (2b), at least, can be satisfied using Rust&#39;s lifetime
+system.  With a naive implementation, however, we find we can only create
+one stand-in object at a time!</p>
+
+<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="kw">struct</span> <span class="ident">MyInterner</span> {
+    <span class="comment">// ...</span>
+}
+<span class="kw">struct</span> <span class="ident">Sym</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">marker</span>: ::<span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> ()<span class="op">&gt;</span>,
+    <span class="comment">// ...</span>
+}
+<span class="kw">impl</span> <span class="ident">MyInterner</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="comment">// ...</span>
+    }
+    <span class="kw">fn</span> <span class="ident">intern</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">Sym</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+        <span class="comment">// ...</span>
+    }
+}
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">interner</span> <span class="op">=</span> <span class="ident">MyInterner</span>::<span class="ident">new</span>();
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">interner</span>.<span class="ident">intern</span>(<span class="string">&quot;x&quot;</span>);
+<span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">interner</span>.<span class="ident">intern</span>(<span class="string">&quot;y&quot;</span>);        <span class="comment">//~ ERROR cannot borrow `interner` as mutable more than once at a time</span></pre>
+
+<p>This happens because rustc&#39;s borrowck sees that <code>intern</code> takes a mutable
+reference to the <code>MyInterner</code> instance and returns a symbol with the same
+lifetime, and infers that this symbol has (mutably) borrowed the interner
+through the reference.  To fix this we can do one of the following.</p>
+
+<ul>
+<li><p>Change <code>intern</code> to take <code>&amp;self</code> and instead employ interior mutability
+through <code>RefCell</code>, <code>Mutex</code>, or similar.</p></li>
+<li><p>Remove the lifetime from <code>Sym</code>, and lose any lifetime-safety
+guarantees.</p></li>
+</ul>
+
+<h3 id='vacuous-promises-and-viable-features' class='section-header'><a href='#vacuous-promises-and-viable-features'>Vacuous Promises and Viable Features</a></h3>
+<p>As we&#39;ve just seen, we <em>are</em> going to be doing error handling for both
+symbol creation <em>and</em> symbol resolution unless we heavily restrict or
+change the ways in which the library can be used.  But maybe we can employ
+the lifetime-safety guarantee in such a way that the benefits outweigh the
+burden of requiring implementations to use interior mutability.</p>
+
+<p>One example is a method that clears (resets) an interner:</p>
+
+<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="kw">fn</span> <span class="ident">intern</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">Sym</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> { <span class="comment">/* ... */</span> }
+    <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="comment">/* ... */</span> }</pre>
+
+<p>Because <code>clear</code> borrows <code>self</code> mutably, it cannot be called until all
+immutable borrows held by <code>Sym&lt;&#39;a&gt;</code> instances have ended.</p>
+
+<h2 id='footnotes' class='section-header'><a href='#footnotes'>Footnotes</a></h2>
+<p><a name="footnote-1">¹</a>: We <em>could</em> produce symbols tied to the source
+interner, but the method of doing so would impose severe restrictions on
+the ways the library could be used.  Using an approach called
+&quot;generativity&quot;, symbols would be valid only within the scope of a closure
+passed as a second argument to <code>intern</code> , as exemplified in the
+<a href="https://github.com/bluss/indexing">indexing</a> crate.</p>
+</div><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Intern.html"
+                                  title='trait symtern::traits::Intern'>Intern</a></td>
+                           <td class='docblock-short'>
+                                <p>Primary interface for interner implementations.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Len.html"
+                                  title='trait symtern::traits::Len'>Len</a></td>
+                           <td class='docblock-short'>
+                                <p>Trait for use with interners that can report the number of values
+they contain.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Resolve.html"
+                                  title='trait symtern::traits::Resolve'>Resolve</a></td>
+                           <td class='docblock-short'>
+                                <p>Interface trait for types that provide the ability to resolve a symbol into
+its referent.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.ResolveUnchecked.html"
+                                  title='trait symtern::traits::ResolveUnchecked'>ResolveUnchecked</a></td>
+                           <td class='docblock-short'>
+                                <p>Interface for resolvers that can provide faster symbol resolution at the
+expense of guaranteed safety.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Symbol.html"
+                                  title='trait symtern::traits::Symbol'>Symbol</a></td>
+                           <td class='docblock-short'>
+                                <p>Trait bounds for symbol (interned stand-in value) types.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.SymbolId.html"
+                                  title='trait symtern::traits::SymbolId'>SymbolId</a></td>
+                           <td class='docblock-short'>
+                                <p>Trait describing primitive types used as symbols&#39; internal representations.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "symtern";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

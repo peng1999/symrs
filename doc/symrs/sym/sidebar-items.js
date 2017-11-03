@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Expr","An owned expression representation."]],"struct":[["Symbol","The symbol type."]]});

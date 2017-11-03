@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `symtern` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, symtern">
+
+    <title>symtern - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Crate symtern</p><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'symtern', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>symtern</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/symtern/lib.rs.html#8-103' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'>
+<h1 id='fast-general-purpose-interners-for-every-use-case' class='section-header'><a href='#fast-general-purpose-interners-for-every-use-case'>Fast general-purpose interners for every use case</a></h1>
+<p>Symtern provides a high-performance interner implementation applicable to
+most use cases, and a small set of adaptors that add additional
+functionality on top of this base implementation.</p>
+
+<h2 id='trait-guided-implementation' class='section-header'><a href='#trait-guided-implementation'>Trait-guided implementation</a></h2>
+<p>Symtern&#39;s types are implemented around a core set of traits that define the
+ways you can interact with an interner; these traits are carefully designed
+to avoid restricting the kinds of adaptors possible.</p>
+
+<h2 id='interners-and-adaptors' class='section-header'><a href='#interners-and-adaptors'>Interners and adaptors</a></h2>
+<p>The base interner, <a href="struct.Pool.html"><code>Pool</code></a>, is generic over the type of interned values,
+and can be configured to use any of Rust&#39;s numeric primitives for symbol
+IDs.  It is the recommended interner for most purposes.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="comment">// Import Symtern&#39;s traits, which allow us to use each interner the same way</span>
+<span class="comment">// regardless of the underlying implementation.</span>
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+
+<span class="comment">// Create a new pool that accepts `&amp;str` arguments to `intern`, and uses</span>
+<span class="comment">// `u8` as the backing representation for its symbol type.</span>
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">symtern</span>::<span class="ident">Pool</span>::<span class="op">&lt;</span><span class="ident">str</span>,<span class="ident">u8</span><span class="op">&gt;</span>::<span class="ident">new</span>();
+<span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Ok</span>(<span class="ident">hello</span>), <span class="prelude-val">Ok</span>(<span class="ident">world</span>)) <span class="op">=</span> (<span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;Hello&quot;</span>), <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;World&quot;</span>)) {
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">hello</span> <span class="op">!=</span> <span class="ident">world</span>);
+
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">hello</span>, <span class="ident">hello</span>);
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="ident">hello</span>), <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;Hello&quot;</span>));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="string">&quot;Hello&quot;</span>), <span class="ident">pool</span>.<span class="ident">resolve</span>(<span class="ident">hello</span>));
+
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">world</span>, <span class="ident">world</span>);
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="ident">world</span>), <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;World&quot;</span>));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="string">&quot;World&quot;</span>), <span class="ident">pool</span>.<span class="ident">resolve</span>(<span class="ident">world</span>));
+}</pre>
+
+<h3 id='adaptors' class='section-header'><a href='#adaptors'>Adaptors</a></h3>
+<p>For an overview of the available adaptors, see the <a href="adaptors/index.html"><code>adaptors</code> module</a>.</p>
+
+<h2 id='more-examples' class='section-header'><a href='#more-examples'>More examples</a></h2>
+<p><a href="traits/trait.Symbol.html">Symbol types</a> are <code>Copy</code>:  they can be passed by
+value without resulting in a move.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">Pool</span>;
+
+<span class="doccomment">/// Take ownership of a value, consuming it.</span>
+<span class="kw">fn</span> <span class="ident">consume</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(_: <span class="ident">T</span>) {}
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">Pool</span>::<span class="op">&lt;</span><span class="ident">str</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">new</span>();
+<span class="kw">let</span> <span class="ident">sym</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;xyz&quot;</span>).<span class="ident">unwrap</span>();
+<span class="ident">consume</span>(<span class="ident">sym</span>);
+<span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;The symbol is still valid: {:?}&quot;</span>, <span class="ident">pool</span>.<span class="ident">resolve</span>(<span class="ident">sym</span>));</pre>
+
+<h2 id='caveat-emptor' class='section-header'><a href='#caveat-emptor'>Caveat Emptor</a></h2>
+<p>Because of the way symbol types in this crate are represented, a symbol
+obtained by calling <code>intern</code> on one <code>Pool</code> instance can easily be identical
+to a symbol obtained from a different instance of the same <code>Pool</code> type
+&mdash; and will resolve without error (albeit incorrectly) on that
+other pool!</p>
+
+<p>Present-day Rust affords us no easy way to fix this without incurring
+additional runtime costs; see the discussion
+<a href="traits/index.html#strikechoosingstrike-chasing-our-guarantees">here</a> for
+more information.</p>
+
+<p>When the crate is compiled in debug mode, an additional field is added to
+all symbol instances to allow run-time detection of attempts to resolve
+a symbol on the wrong resolver, and any such attempt will trigger a panic.</p>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="adaptors/index.html"
+                                  title='mod symtern::adaptors'>adaptors</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="prelude/index.html"
+                                  title='mod symtern::prelude'>prelude</a></td>
+                           <td class='docblock-short'>
+                                <p>Items intended for glob-import.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="traits/index.html"
+                                  title='mod symtern::traits'>traits</a></td>
+                           <td class='docblock-short'>
+                                <p>Traits that define the interface for all string-interning implementations.</p>
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Error.html"
+                                  title='struct symtern::Error'>Error</a></td>
+                           <td class='docblock-short'>
+                                <p>Error type used by this crate.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Pool.html"
+                                  title='struct symtern::Pool'>Pool</a></td>
+                           <td class='docblock-short'>
+                                <p>Simple hash-based interner generic over both the type of interned values
+and the type used to represent symbol IDs.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Sym.html"
+                                  title='struct symtern::Sym'>Sym</a></td>
+                           <td class='docblock-short'>
+                                <p>Symbol type used by <a href="struct.Pool.html"><code>Pool</code></a>&#39;s <a href="../traits/trait.Intern.html"><code>Intern</code></a> and <a href="../traits/trait.Resolve.html"><code>Resolve</code></a> implementations.</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ErrorKind.html"
+                                  title='enum symtern::ErrorKind'>ErrorKind</a></td>
+                           <td class='docblock-short'>
+                                <p>Kinds of errors representable by the Error type.</p>
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.Result.html"
+                                  title='type symtern::Result'>Result</a></td>
+                           <td class='docblock-short'>
+                                <p>Result type used by fallible operations in symtern.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "symtern";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
