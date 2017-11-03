@@ -16,16 +16,36 @@ macro_rules! op_func_impl {
     // Add: self + rhs
     (Add, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn add(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Sum(vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()])
+            let lhs = fwd_clone!(@$lm self).into();
+            let rhs = fwd_clone!(@$rm rhs).into();
+            match lhs {
+                $crate::sym::Expr::Sum(mut args) => {
+                    args.push(rhs);
+                    $crate::sym::Expr::Sum(args)
+                },
+                lhs => $crate::sym::Expr::Sum(vec![lhs, rhs]),
+            }
+            //$crate::sym::Expr::Sum(
+            //vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()]
+            //)
         }
     };
     // Mul: self * rhs
     (Mul, $type_:ty, @$lm:ident, @$rm:ident) => {
         fn mul(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Product(vec![
-                fwd_clone!(@$lm self).into(),
-                fwd_clone!(@$rm rhs).into()
-            ])
+            let lhs = fwd_clone!(@$lm self).into();
+            let rhs = fwd_clone!(@$rm rhs).into();
+            match lhs {
+                $crate::sym::Expr::Product(mut args) => {
+                    args.push(rhs);
+                    $crate::sym::Expr::Product(args)
+                },
+                lhs => $crate::sym::Expr::Product(vec![lhs, rhs]),
+            }
+            // $crate::sym::Expr::Product(vec![
+            //     fwd_clone!(@$lm self).into(),
+            //     fwd_clone!(@$rm rhs).into()
+            // ])
         }
     };
     // Div: self / rhs

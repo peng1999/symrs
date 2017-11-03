@@ -73,6 +73,7 @@ fn expr_works() {
 
     assert_finished_and_eq!(expr("(123)"), Expr::integer(123));
     assert_finished_and_eq!(expr("( 123 )"), Expr::integer(123));
+    assert_finished_and_eq!(expr("((123))"), Expr::integer(123));
 
     let x = Symbol::new("x");
     let y = Symbol::new("y");
@@ -88,5 +89,8 @@ fn expr_works() {
             Expr::integer(5),
         ]));
     assert_finished_and_eq!(expr("2 * x / y"), 2i32 * x / y);
+    assert_finished_and_eq!(expr("2 * (x / y)"), 2i32 * (x / y));
+    assert_finished_and_eq!(expr("2 * (x * y)"), 2i32 * (x * y));
+    assert_finished_and_eq!(expr("(2 * x) * y"), (2i32 * x) * y);
 }
 
