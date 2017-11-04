@@ -25,6 +25,15 @@ impl Symbol {
 
 impl Display for Symbol {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", SYMPOOL.lock().unwrap().resolve(&self.0).unwrap())
+        write!(
+            f,
+            "{}",
+            SYMPOOL
+                .lock()
+                .map_err(|_| fmt::Error)?
+                .resolve(&self.0)
+                // The symbol is put into the pool when it's created, so it's safe to unwrap.
+                .unwrap()
+        )
     }
 }
