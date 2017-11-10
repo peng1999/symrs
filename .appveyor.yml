@@ -27,14 +27,14 @@ environment:
         - channel: nightly
           target: i686-pc-windows-msvc
           cargoflags: --all-features
-        # Lowest supported version 64-bit MSVC
-        - channel: 1.18.0
-          target: x86_64-pc-windows-msvc
-          cargoflags: --features "parser"
-        # Lowest supported version 32-bit MSVC
-        - channel: 1.18.0
-          target: i686-pc-windows-msvc
-          cargoflags: --features "parser"
+        # # Lowest supported version 64-bit MSVC
+        # - channel: 1.18.0
+        #   target: x86_64-pc-windows-msvc
+        #   cargoflags: --features "parser"
+        # # Lowest supported version 32-bit MSVC
+        # - channel: 1.18.0
+        #   target: i686-pc-windows-msvc
+        #   cargoflags: --features "parser"
 
 ## Install Script ##
 
