@@ -33,6 +33,9 @@ fn display_expr() {
     let app = Expr::approximate(1.32f64);
     assert_eq!(format!("{}", app), "1.32");
 
+    let neg = - &sym;
+    assert_eq!(format!("{}", neg), "- x");
+
     let plus = int + sym;
     assert_eq!(format!("{}", plus), "4 + x");
 
@@ -51,6 +54,7 @@ fn equality() {
     assert_ne!(Expr::integer(9), 10.into());
 
     assert_eq!(x - 1, x - 1);
+    assert_eq!(- x, - x);
 }
 
 #[test]
@@ -91,12 +95,22 @@ fn operators_works() {
     let z = Symbol::new("z");
     let big_3: BigInt = 3.into();
 
-    // assert_eq!(x + y, Expr::Sum(vec![Expr::Sym(x), Expr::Sym(y)]));
-    // assert_eq!(1 + y, Expr::Sum(vec![Expr::Integer(1.into()), Expr::Sym(y)]));
-    // assert_eq!(x + 1, Expr::Sum(vec![Expr::Sym(x), Expr::Integer(1.into())]));
+    assert_eq!(x + y, Expr::Sum(vec![Expr::Sym(x), Expr::Sym(y)]));
+    assert_eq!(1 + y, Expr::Sum(vec![Expr::Integer(1.into()), Expr::Sym(y)]));
+    assert_eq!(x + 1, Expr::Sum(vec![Expr::Sym(x), Expr::Integer(1.into())]));
+
+    assert_eq!(
+        2 * x * 5,
+        Expr::Product(vec![
+            Expr::integer(2),
+            Expr::symbol("x"),
+            Expr::integer(5),
+        ]));
 
     // These operators should just works.
     let _ignore = [
+        // Neg
+        - x,            // - sym
         // Add
         x + y,          // sym + sym
         x + 1 + z,      // expr + sym
@@ -130,6 +144,6 @@ fn operators_works() {
         &big_3 / y,      // big / sym
         y / (x / &big_3),// sym / big
         // Mixed
-        x + (4 - (x / 2)) * z,
+        x + (4 - (x / 2)) * - z,
     ];
 }

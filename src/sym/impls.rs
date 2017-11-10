@@ -1,7 +1,7 @@
 use super::Expr;
 use super::Symbol;
 use num::{BigInt, BigUint};
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, Neg};
 
 // impls for operators
 
@@ -67,6 +67,11 @@ macro_rules! op_func_impl {
             ])
         }
     };
+    (Neg, $type_:ty, @$m:ident) => {
+        fn neg(self) -> Self::Output {
+            $crate::sym::Expr::negative(fwd_clone!(@$m self))
+        }
+    };
 }
 
 /// Expand to operator impls.
@@ -112,6 +117,17 @@ macro_rules! op_impls {
         }
         op_impls! {$($rest)*}
     };
+    (impl Neg for $type_:ty; $($rest:tt)* ) => {
+        impl Neg for $type_ {
+            type Output = Expr;
+            op_func_impl! {Neg, $type_, @Take}
+        }
+        impl<'a> Neg for &'a $type_ {
+            type Output = Expr;
+            op_func_impl! {Neg, &'a $type_, @Ref}
+        }
+        op_impls! {$($rest)*}
+    };
     // End point for recursion.
     () => {};
 }
@@ -129,6 +145,9 @@ op_impls! {
     impl<T: Into<Expr>> Mul<T> for Symbol;
     impl<T: Into<Expr>> Div<T> for Symbol;
     impl<T: Into<Expr>> Sub<T> for Symbol;
+
+    impl Neg for Expr;
+    impl Neg for Symbol;
 }
 
 // T op Expr

@@ -125,7 +125,7 @@ impl Display for Expr {
             Integer(ref i) => write!(f, "{}", i),
             Sym(s) => write!(f, "{}", s),
             Approx(n) => write!(f, "{}", n),
-            Neg(ref e) => fmt_f(e, &mut |e| write!(f, "-{}", e)),
+            Neg(ref e) => fmt_f(e, &mut |e| write!(f, "- {}", e)),
             Sum(ref args) => write!(f, "{}", args.into_iter().format_with(" + ", fmt_f)),
             Product(ref args) => write!(f, "{}", args.into_iter().format_with(" * ", fmt_f)),
             Ratio(ref n, ref d) => {
