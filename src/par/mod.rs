@@ -59,9 +59,9 @@ named!(primitive<&str, Expr>,
 
 named!(parens<&str, Expr>,
        ws!(delimited!(
-               tag!("("),
-               expr,
-               tag!(")")
+               tag_s!("("),
+               parse_expr,
+               tag_s!(")")
             ))
        );
 
@@ -71,15 +71,19 @@ named!(unit<&str, Expr>,
            parens
        ));
 
-pub fn expr(input: &str) -> IResult<&str, Expr> {
-    product(input)
-}
+named!(negative<&str, Expr>,
+       alt_complete!(
+           unit |
+           map!(
+               ws!(pair!(tag_s!("-"), unit)),
+               |(_, e)| Expr::Neg(Box::new(e))
+       )));
 
 named!(product<&str, Expr>, do_parse!(
-       init: unit >>
+       init: negative >>
        res: fold_many0!(
            pair!(one_of!("*/"),
-                 unit),
+                 negative),
            init,
            |acc, (op, val)| {
                match op {
@@ -96,6 +100,10 @@ named!(product<&str, Expr>, do_parse!(
            }) >>
        (res)
    ));
+
+pub fn parse_expr(input: &str) -> IResult<&str, Expr> {
+    product(input)
+}
 
 #[cfg(test)]
 mod test;
