@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/pgw/.cargo/registry/src/github.com-1ecc6299db9ec823/itertools-0.7.1/src/free.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/pgw/.cargo/registry/src/github.com-1ecc6299db9ec823/itertools-0.7.2/src/free.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>free.rs.html -- source</title>
@@ -273,6 +273,7 @@
 <span id="228">228</span>
 <span id="229">229</span>
 <span id="230">230</span>
+<span id="231">231</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Free functions that create iterator adaptors or call iterator methods.</span>
 <span class="doccomment">//!</span>
@@ -297,6 +298,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">kmerge_impl</span>::<span class="ident">kmerge</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">zip_eq_impl</span>::<span class="ident">zip_eq</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">merge_join</span>::<span class="ident">merge_join_by</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rciter_impl</span>::<span class="ident">rciter</span>;
 
@@ -530,7 +532,7 @@
                     <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

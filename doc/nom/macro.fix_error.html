@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/nom/simple_errors.rs.html#104-120' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/nom/verbose_errors.rs.html#150-187' title='goto source code'>[src]</a></span></h1>
 <pre class="rust macro">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">fix_error</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">submac</span>:<span class="macro">ident</span><span class="macro">!</span>( $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">*</span> )) <span class="op">=&gt;</span> { ... };
@@ -64,7 +64,7 @@
 
     <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;efghblah&quot;</span>[..];
     <span class="kw">let</span> <span class="ident">res_a</span> <span class="op">=</span> <span class="ident">parser</span>(<span class="ident">a</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">res_a</span>,  <span class="ident">Error</span>(<span class="macro">error_node_position</span><span class="macro">!</span>( <span class="ident">ErrorKind</span>::<span class="ident">Custom</span>(<span class="string">&quot;custom error message&quot;</span>), <span class="ident">a</span>, <span class="ident">Position</span>(<span class="ident">ErrorKind</span>::<span class="ident">Fix</span>, <span class="ident">a</span>))));</pre>
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">res_a</span>,  <span class="ident">Error</span>(<span class="ident">NodePosition</span>( <span class="ident">ErrorKind</span>::<span class="ident">Custom</span>(<span class="string">&quot;custom error message&quot;</span>), <span class="ident">a</span>, <span class="macro">vec</span><span class="macro">!</span>(<span class="ident">Position</span>(<span class="ident">ErrorKind</span>::<span class="ident">Fix</span>, <span class="ident">a</span>)))));</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -90,7 +90,7 @@
                     <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

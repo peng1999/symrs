@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/pgw/.cargo/registry/src/github.com-1ecc6299db9ec823/nom-3.2.0/src/multi.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/pgw/.cargo/registry/src/github.com-1ecc6299db9ec823/nom-3.2.1/src/multi.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>multi.rs.html -- source</title>
@@ -2091,7 +2091,7 @@
 <span class="doccomment">///    let res_b: (Vec&lt;&amp;[u8]&gt;, &amp;[u8]) = (Vec::new(), &amp;b&quot;efgh&quot;[..]);</span>
 <span class="doccomment">///    assert_eq!(multi(&amp;a[..]), Done(&amp;b&quot;abcd&quot;[..], res_a));</span>
 <span class="doccomment">///    assert_eq!(multi(&amp;b[..]), Done(&amp;b&quot;abcd&quot;[..], res_b));</span>
-<span class="doccomment">///    assert_eq!(multi(&amp;c[..]), Error(error_node_position!(ErrorKind::ManyTill,&amp;c[..],error_position(ErrorKind::Tag,&amp;c[..]))));</span>
+<span class="doccomment">///    assert_eq!(multi(&amp;c[..]), Error(error_node_position!(ErrorKind::ManyTill,&amp;c[..],error_position!(ErrorKind::Tag,&amp;c[..]))));</span>
 <span class="doccomment">/// # }</span>
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
@@ -3011,7 +3011,7 @@
     <span class="kw">let</span> <span class="ident">res_b</span>: (<span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>, <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">=</span> (<span class="ident">Vec</span>::<span class="ident">new</span>(), <span class="kw-2">&amp;</span><span class="string">b&quot;efgh&quot;</span>[..]);
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">multi</span>(<span class="kw-2">&amp;</span><span class="ident">a</span>[..]), <span class="ident">Done</span>(<span class="kw-2">&amp;</span><span class="string">b&quot;abcd&quot;</span>[..], <span class="ident">res_a</span>));
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">multi</span>(<span class="kw-2">&amp;</span><span class="ident">b</span>[..]), <span class="ident">Done</span>(<span class="kw-2">&amp;</span><span class="string">b&quot;abcd&quot;</span>[..], <span class="ident">res_b</span>));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">multi</span>(<span class="kw-2">&amp;</span><span class="ident">c</span>[..]), <span class="ident">Error</span>(<span class="macro">error_node_position</span><span class="macro">!</span>(<span class="ident">ErrorKind</span>::<span class="ident">ManyTill</span>,<span class="kw-2">&amp;</span><span class="ident">c</span>[..], <span class="ident">error_position</span>(<span class="ident">ErrorKind</span>::<span class="ident">Tag</span>,<span class="kw-2">&amp;</span><span class="ident">c</span>[..]))));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">multi</span>(<span class="kw-2">&amp;</span><span class="ident">c</span>[..]), <span class="ident">Error</span>(<span class="macro">error_node_position</span><span class="macro">!</span>(<span class="ident">ErrorKind</span>::<span class="ident">ManyTill</span>,<span class="kw-2">&amp;</span><span class="ident">c</span>[..], <span class="macro">error_position</span><span class="macro">!</span>(<span class="ident">ErrorKind</span>::<span class="ident">Tag</span>,<span class="kw-2">&amp;</span><span class="ident">c</span>[..]))));
   }
 
   <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -3298,7 +3298,7 @@
                     <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

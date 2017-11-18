@@ -73,12 +73,27 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Mutex</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Display</span>};
 <span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">symtern</span>::{<span class="ident">Pool</span>, <span class="ident">Sym</span>};
 <span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">adaptors</span>::{<span class="self">self</span>, <span class="ident">Inline</span>};
+<span class="kw">use</span> <span class="ident">sym</span>::<span class="ident">Expr</span>;
 
 <span class="kw">type</span> <span class="ident">InlinePool</span> <span class="op">=</span> <span class="ident">Inline</span><span class="op">&lt;</span><span class="ident">Pool</span><span class="op">&lt;</span><span class="ident">str</span>, <span class="ident">u32</span><span class="op">&gt;&gt;</span>;
 <span class="kw">type</span> <span class="ident">InlineSym</span> <span class="op">=</span> <span class="ident">adaptors</span>::<span class="ident">InlineSym</span><span class="op">&lt;</span><span class="ident">Sym</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;&gt;</span>;
@@ -97,11 +112,24 @@
         <span class="kw">let</span> <span class="ident">sym</span> <span class="op">=</span> <span class="ident">SYMPOOL</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>().<span class="ident">intern</span>(<span class="ident">s</span>).<span class="ident">unwrap</span>();
         <span class="ident">Symbol</span>(<span class="ident">sym</span>)
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pow</span><span class="op">&lt;</span><span class="ident">E</span>:<span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">E</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span> {
+        <span class="ident">Expr</span>::<span class="ident">pow</span>(<span class="self">self</span>.<span class="ident">into</span>(), <span class="ident">rhs</span>)
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Symbol</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">SYMPOOL</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>().<span class="ident">resolve</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>).<span class="ident">unwrap</span>())
+        <span class="macro">write</span><span class="macro">!</span>(
+            <span class="ident">f</span>,
+            <span class="string">&quot;{}&quot;</span>,
+            <span class="ident">SYMPOOL</span>
+                .<span class="ident">lock</span>()
+                .<span class="ident">map_err</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">fmt</span>::<span class="ident">Error</span>)<span class="question-mark">?</span>
+                .<span class="ident">resolve</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>)
+                <span class="comment">// The symbol is put into the pool when it&#39;s created, so it&#39;s safe to unwrap.</span>
+                .<span class="ident">unwrap</span>()
+        )
     }
 }
 </pre>
@@ -130,7 +158,7 @@
                     <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
