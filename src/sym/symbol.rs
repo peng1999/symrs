@@ -3,6 +3,7 @@ use std::fmt::{self, Display};
 use symtern::prelude::*;
 use symtern::{Pool, Sym};
 use symtern::adaptors::{self, Inline};
+use sym::Expr;
 
 type InlinePool = Inline<Pool<str, u32>>;
 type InlineSym = adaptors::InlineSym<Sym<u32>>;
@@ -20,6 +21,10 @@ impl Symbol {
     pub fn new(s: &str) -> Symbol {
         let sym = SYMPOOL.lock().unwrap().intern(s).unwrap();
         Symbol(sym)
+    }
+
+    pub fn pow<E:Into<Expr>>(self, rhs: E) -> Expr {
+        Expr::pow(self.into(), rhs)
     }
 }
 

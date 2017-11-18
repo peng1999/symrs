@@ -41,6 +41,20 @@ macro_rules! assert_negtive {
     }}
 }
 
+macro_rules! assert_pow {
+    ($parser:expr) => {{
+        let x = Symbol::new("x");
+        assert_finished_and_eq!($parser("x^x"), x.pow(x));
+        assert_finished_and_eq!($parser("x ^ x"), x.pow(x));
+        assert_finished_and_eq!($parser("x ^ x^ x"), x.pow(x.pow(x)));
+        assert_finished_and_eq!($parser("x ^x   ^ x"), x.pow(x.pow(x)));
+        assert_finished_and_eq!($parser("(x ^ x) ^ x"), x.pow(x).pow(x));
+        assert_finished_and_eq!($parser("(x ^ 2) ^ x"), x.pow(2).pow(x));
+        // println!("{:?}", $parser("(x ^ -2) ^ - x"));
+        assert_finished_and_eq!($parser("(x ^ -2) ^ - x"), x.pow(-2).pow(- x));
+    }}
+}
+
 #[test]
 fn integer_works() {
     assert_integers!(integer);
@@ -64,10 +78,19 @@ fn primitive_works() {
 }
 
 #[test]
+fn pow_works() {
+    assert_integers!(pow);
+    assert_floats!(pow);
+    assert_symbols!(pow);
+    assert_pow!(pow);
+}
+
+#[test]
 fn negative_works() {
     assert_integers!(negative);
     assert_floats!(negative);
     assert_symbols!(negative);
+    assert_pow!(negative);
     assert_negtive!(negative);
 }
 
@@ -76,6 +99,7 @@ fn parse_works() {
     assert_integers!(parse_expr);
     assert_floats!(parse_expr);
     assert_symbols!(parse_expr);
+    assert_pow!(parse_expr);
     assert_negtive!(parse_expr);
 
     assert_finished_and_eq!(parse_expr("(123)"), Expr::integer(123));
@@ -84,7 +108,6 @@ fn parse_works() {
 
     let x = Symbol::new("x");
     let y = Symbol::new("y");
-    // println!("{:?}", parse_expr("2 * x"));
     assert_finished_and_eq!(parse_expr("2*x"), 2i32 * x);
     assert_finished_and_eq!(parse_expr("2 * x"), 2i32 * x);
     assert_finished_and_eq!(parse_expr("x *x"), x * x);
@@ -95,6 +118,8 @@ fn parse_works() {
     assert_finished_and_eq!(parse_expr("(2 * x) * y"), (2i32 * x) * y);
     assert_finished_and_eq!(parse_expr("2*-x"), 2i32 * - x);
     assert_finished_and_eq!(parse_expr("-2 * x"), -2i32 * x);
+    println!("{:?}", parse_expr("2 * -(-x / - y)"));
     assert_finished_and_eq!(parse_expr("2 * -(-x / - y)"), 2i32 * - (- x / - y));
+    assert_finished_and_eq!(parse_expr("2 * -(-x / 3 ^ - y)"), 2i32 * - (- x / Expr::pow(3.into(), - y)));
 }
 

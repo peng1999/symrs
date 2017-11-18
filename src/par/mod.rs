@@ -71,12 +71,23 @@ named!(unit<&str, Expr>,
            parens
        ));
 
+named!(pow<&str, Expr>,
+       ws!(alt_complete!(
+           do_parse!(
+               left: unit >>
+               tag_s!("^") >>
+               right: negative >>
+               (Expr::Pow(Box::new(left), Box::new(right)))) |
+           unit
+       )));
+
 named!(negative<&str, Expr>,
-       alt_complete!(
-           unit |
-           map!(
-               ws!(pair!(tag_s!("-"), unit)),
-               |(_, e)| Expr::Neg(Box::new(e))
+       ws!(alt_complete!(
+           pow |
+           do_parse!(
+               tag_s!("-") >> e: pow >>
+               (Expr::Neg(Box::new(e)))
+           )
        )));
 
 named!(product<&str, Expr>, do_parse!(
