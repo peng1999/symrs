@@ -55,6 +55,21 @@ macro_rules! assert_pow {
     }}
 }
 
+macro_rules! assert_product {
+    ($parser:expr) => {{
+        let x = Symbol::new("x");
+        assert_finished_and_eq!($parser("x*x"), x * x);
+        assert_finished_and_eq!($parser("x * x"), x * x);
+        assert_finished_and_eq!($parser("x * x* x"), x * x * x);
+        assert_finished_and_eq!($parser("x *x *x"), x * x * x);
+        assert_finished_and_eq!($parser("x *x *-x"), x * x * - x);
+        assert_finished_and_eq!($parser("x / x/x"), x / x / x);
+        assert_finished_and_eq!($parser("x / x * x"), x / x * x);
+        assert_finished_and_eq!($parser("x / (x * x)"), x / (x * x));
+        assert_finished_and_eq!($parser("4 / (x * x)"), 4 / (x * x));
+    }}
+}
+
 #[test]
 fn integer_works() {
     assert_integers!(integer);
@@ -95,12 +110,23 @@ fn negative_works() {
 }
 
 #[test]
+fn product_works() {
+    assert_integers!(product);
+    assert_floats!(product);
+    assert_symbols!(product);
+    assert_pow!(product);
+    assert_negtive!(product);
+    assert_product!(product);
+}
+
+#[test]
 fn parse_works() {
     assert_integers!(parse_expr);
     assert_floats!(parse_expr);
     assert_symbols!(parse_expr);
     assert_pow!(parse_expr);
     assert_negtive!(parse_expr);
+    assert_product!(parse_expr);
 
     assert_finished_and_eq!(parse_expr("(123)"), Expr::integer(123));
     assert_finished_and_eq!(parse_expr("( 123 )"), Expr::integer(123));
@@ -121,5 +147,7 @@ fn parse_works() {
     println!("{:?}", parse_expr("2 * -(-x / - y)"));
     assert_finished_and_eq!(parse_expr("2 * -(-x / - y)"), 2i32 * - (- x / - y));
     assert_finished_and_eq!(parse_expr("2 * -(-x / 3 ^ - y)"), 2i32 * - (- x / Expr::pow(3.into(), - y)));
+    assert_finished_and_eq!(parse_expr("2 * -(-x / 3 ^ - y) - 4"), 2i32 * - (- x / Expr::pow(3.into(), - y)) - 4);
+    assert_finished_and_eq!(parse_expr("x / (3 + 5 * - x - (- y^4))"), x / (3 + 5 * - x - (- y.pow(4))));
 }
 

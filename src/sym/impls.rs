@@ -25,9 +25,6 @@ macro_rules! op_func_impl {
                 },
                 lhs => $crate::sym::Expr::Sum(vec![lhs, rhs]),
             }
-            //$crate::sym::Expr::Sum(
-            //vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()]
-            //)
         }
     };
     // Mul: self * rhs
@@ -42,10 +39,6 @@ macro_rules! op_func_impl {
                 },
                 lhs => $crate::sym::Expr::Product(vec![lhs, rhs]),
             }
-            // $crate::sym::Expr::Product(vec![
-            //     fwd_clone!(@$lm self).into(),
-            //     fwd_clone!(@$rm rhs).into()
-            // ])
         }
     };
     // Div: self / rhs
@@ -60,11 +53,11 @@ macro_rules! op_func_impl {
     // There isn't a minus constructor, should add a negative.
     // Sub: self + (-rhs)
     (Sub, $type_:ty, @$lm:ident, @$rm:ident) => {
+        // Defined by operator Add
         fn sub(self, rhs: $type_) -> Self::Output {
-            $crate::sym::Expr::Sum(vec![
-                fwd_clone!(@$lm self).into(),
+            $crate::sym::Expr::from(fwd_clone!(@$lm self)) + 
                 $crate::sym::Expr::negative(fwd_clone!(@$rm rhs))
-            ])
+
         }
     };
     (Neg, $type_:ty, @$m:ident) => {
@@ -83,18 +76,10 @@ macro_rules! op_impls {
             type Output = Expr;
             op_func_impl! {$trait_, T, @Take, @Take}
         }
-        // impl<'a, T: Into<Expr> + Clone> $trait_<&'a T> for $lhs_t {
-        //     type Output = Expr;
-        //     op_func_impl! {$trait_, &T, @Take, @Ref}
-        // }
         impl<'a, T: Into<Expr>> $trait_<T> for &'a $lhs_t {
             type Output = Expr;
             op_func_impl! {$trait_, T, @Ref, @Take}
         }
-        // impl<'a,'b, T: Into<Expr> + Clone> $trait_<&'a T> for &'b $lhs_t {
-        //     type Output = Expr;
-        //     op_func_impl! {$trait_, &T, @Ref, @Ref}
-        // }
         op_impls! {$($rest)*}
     };
     // The form `Expr/Symbol op T`.

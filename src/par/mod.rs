@@ -103,17 +103,36 @@ named!(product<&str, Expr>, do_parse!(
                            f.push(val);
                            Expr::Product(f)
                        },
-                       e => Expr::Product(vec![e, val]),
+                       e => e * val,
                    },
                    // must be '/'
-                   _ => Expr::Ratio(Box::new(acc), Box::new(val)),
+                   _ => acc / val,
+               }
+           }) >>
+       (res)
+   ));
+
+named!(sum<&str, Expr>, do_parse!(
+       init: product >>
+       res: fold_many0!(
+           pair!(one_of!("+-"),
+                 product),
+           init,
+           |acc, (op, val)| {
+               let val: Expr = if op == '+' { val } else { - val };
+               match acc {
+                   Expr::Sum(mut f) => {
+                       f.push(val);
+                       Expr::Sum(f)
+                   },
+                   e => e + val,
                }
            }) >>
        (res)
    ));
 
 pub fn parse_expr(input: &str) -> IResult<&str, Expr> {
-    product(input)
+    sum(input)
 }
 
 #[cfg(test)]
