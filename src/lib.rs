@@ -8,6 +8,10 @@
 #![cfg_attr(check_doc, deny(missing_docs))]
 #![cfg_attr(feature = "cargo-clippy", warn(clippy))]
 
+#[cfg(test)]
+#[macro_use]
+extern crate pretty_assertions;
+
 extern crate num;
 extern crate symtern;
 #[macro_use]
