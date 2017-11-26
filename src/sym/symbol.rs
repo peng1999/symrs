@@ -23,6 +23,16 @@ impl Symbol {
         Symbol(sym)
     }
 
+    /// Construct a power expression.
+    ///
+    /// # Examples
+    /// ```
+    /// use symrs::sym::{Expr, Symbol};
+    ///
+    /// let x = Symbol::new("x");
+    /// assert_eq!(x.pow(2), Expr::pow(x, 2));
+    /// ```
+    /// 
     pub fn pow<E:Into<Expr>>(self, rhs: E) -> Expr {
         Expr::pow(self.into(), rhs)
     }
