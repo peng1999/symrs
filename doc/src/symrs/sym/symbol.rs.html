@@ -130,7 +130,7 @@
     <span class="doccomment">/// use symrs::sym::{Expr, Symbol};</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let x = Symbol::new(&quot;x&quot;);</span>
-    <span class="doccomment">/// assert_eq!(x.pow(2), Expr::pow(x, 2));</span>
+    <span class="doccomment">/// assert_eq!(x.pow(2), Expr::pow(x.into(), 2));</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// </span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pow</span><span class="op">&lt;</span><span class="ident">E</span>:<span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">E</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span> {
