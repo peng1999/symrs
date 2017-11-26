@@ -30,7 +30,7 @@ impl Symbol {
     /// use symrs::sym::{Expr, Symbol};
     ///
     /// let x = Symbol::new("x");
-    /// assert_eq!(x.pow(2), Expr::pow(x, 2));
+    /// assert_eq!(x.pow(2), Expr::pow(x.into(), 2));
     /// ```
     /// 
     pub fn pow<E:Into<Expr>>(self, rhs: E) -> Expr {
