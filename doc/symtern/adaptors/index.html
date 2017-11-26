@@ -68,7 +68,7 @@ it as a generic parameter.</p>
 <p>If you construct an adaptor from an existing interner, you will lose access
 to all previously-created symbols:</p>
 
-<div class='information'><div class='tooltip compile_fail'>⚠<span class='tooltiptext'>This code doesn't compile so be extra careful!</span></div></div><pre class="rust rust-example-rendered compile_fail">
+<div class='information'><div class='tooltip compile_fail'>ⓘ<span class='tooltiptext'>This example deliberately fails to compile</span></div></div><pre class="rust rust-example-rendered compile_fail">
 <span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">Pool</span>;
 <span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">adaptors</span>::<span class="ident">Inline</span>;
@@ -115,7 +115,7 @@ from being dropped while it is in use.</p>
 <p>For example, the following code will not compile because it attempts to
 return a symbol from a temporary <code>Luma</code>-wrapped interner.</p>
 
-<div class='information'><div class='tooltip compile_fail'>⚠<span class='tooltiptext'>This code doesn't compile so be extra careful!</span></div></div><pre class="rust rust-example-rendered compile_fail">
+<div class='information'><div class='tooltip compile_fail'>ⓘ<span class='tooltiptext'>This example deliberately fails to compile</span></div></div><pre class="rust rust-example-rendered compile_fail">
 <span class="comment">//` id=&quot;example&quot; {</span>
 <span class="kw">use</span> <span class="ident">symtern</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">symtern</span>::{<span class="ident">Pool</span> <span class="kw">as</span> <span class="ident">Basic</span>, <span class="ident">Sym</span>};

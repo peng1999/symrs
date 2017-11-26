@@ -83,13 +83,13 @@ interner/resolver implementations.</p>
 <p>Symbols are resolved using the <a href="trait.Resolve.html#tymethod.resolve"><code>Resolve</code></a> trait.  In many cases you can
 simply pass the symbol to the interner&#39;s <a href="trait.Resolve.html#tymethod.resolve"><code>resolve</code></a> method by value:</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="string">&quot;Kibbles&quot;</span>), <span class="ident">basic_pool</span>.<span class="ident">resolve</span>(<span class="ident">cat</span>));</pre>
 
 <p>Some <code>Resolve</code> implementations, however, require a <em>reference</em> to
 the symbol:</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Ok</span>(<span class="string">&quot;Fido&quot;</span>), <span class="ident">inline_pool</span>.<span class="ident">resolve</span>(<span class="kw-2">&amp;</span><span class="ident">dog</span>));</pre>
 
 <p>You can tell the difference by inspect the <a href="trait.Resolve.html#associatedtype.Input"><code>Input</code></a>
@@ -131,7 +131,7 @@ can&#39;t even promise zero-cost run-time checks!</p>
 system.  With a naive implementation, however, we find we can only create
 one stand-in object at a time!</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">struct</span> <span class="ident">MyInterner</span> {
     <span class="comment">// ...</span>
 }
@@ -173,7 +173,7 @@ burden of requiring implementations to use interior mutability.</p>
 
 <p>One example is a method that clears (resets) an interner:</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">fn</span> <span class="ident">intern</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">Sym</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> { <span class="comment">/* ... */</span> }
     <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="comment">/* ... */</span> }</pre>
 

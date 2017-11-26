@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse_expr",""]]});
+initSidebarItems({"fn":[["parse_expr","Parse an expression."]]});

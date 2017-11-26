@@ -349,21 +349,6 @@
 <span id="304">304</span>
 <span id="305">305</span>
 <span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
-<span id="313">313</span>
-<span id="314">314</span>
-<span id="315">315</span>
-<span id="316">316</span>
-<span id="317">317</span>
-<span id="318">318</span>
-<span id="319">319</span>
-<span id="320">320</span>
-<span id="321">321</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Expr</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Symbol</span>;
@@ -392,9 +377,6 @@
                 },
                 <span class="ident">lhs</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">sym</span>::<span class="ident">Expr</span>::<span class="ident">Sum</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">lhs</span>, <span class="ident">rhs</span>]),
             }
-            <span class="comment">//$crate::sym::Expr::Sum(</span>
-            <span class="comment">//vec![fwd_clone!(@$lm self).into(), fwd_clone!(@$rm rhs).into()]</span>
-            <span class="comment">//)</span>
         }
     };
     <span class="comment">// Mul: self * rhs</span>
@@ -409,10 +391,6 @@
                 },
                 <span class="ident">lhs</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">sym</span>::<span class="ident">Expr</span>::<span class="ident">Product</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">lhs</span>, <span class="ident">rhs</span>]),
             }
-            <span class="comment">// $crate::sym::Expr::Product(vec![</span>
-            <span class="comment">//     fwd_clone!(@$lm self).into(),</span>
-            <span class="comment">//     fwd_clone!(@$rm rhs).into()</span>
-            <span class="comment">// ])</span>
         }
     };
     <span class="comment">// Div: self / rhs</span>
@@ -427,11 +405,11 @@
     <span class="comment">// There isn&#39;t a minus constructor, should add a negative.</span>
     <span class="comment">// Sub: self + (-rhs)</span>
     (<span class="ident">Sub</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">type_</span>:<span class="ident">ty</span>, @<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lm</span>:<span class="ident">ident</span>, @<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rm</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
+        <span class="comment">// Defined by operator Add</span>
         <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">type_</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">sym</span>::<span class="ident">Expr</span>::<span class="ident">Sum</span>(<span class="macro">vec</span><span class="macro">!</span>[
-                <span class="macro">fwd_clone</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lm</span> <span class="self">self</span>).<span class="ident">into</span>(),
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">sym</span>::<span class="ident">Expr</span>::<span class="ident">from</span>(<span class="macro">fwd_clone</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lm</span> <span class="self">self</span>)) <span class="op">+</span> 
                 <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">sym</span>::<span class="ident">Expr</span>::<span class="ident">negative</span>(<span class="macro">fwd_clone</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rm</span> <span class="ident">rhs</span>))
-            ])
+
         }
     };
     (<span class="ident">Neg</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">type_</span>:<span class="ident">ty</span>, @<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
@@ -450,18 +428,10 @@
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">Expr</span>;
             <span class="macro">op_func_impl</span><span class="macro">!</span> {<span class="macro-nonterminal">$</span><span class="macro-nonterminal">trait_</span>, <span class="ident">T</span>, @<span class="ident">Take</span>, @<span class="ident">Take</span>}
         }
-        <span class="comment">// impl&lt;&#39;a, T: Into&lt;Expr&gt; + Clone&gt; $trait_&lt;&amp;&#39;a T&gt; for $lhs_t {</span>
-        <span class="comment">//     type Output = Expr;</span>
-        <span class="comment">//     op_func_impl! {$trait_, &amp;T, @Take, @Ref}</span>
-        <span class="comment">// }</span>
         <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">trait_</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs_t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">Expr</span>;
             <span class="macro">op_func_impl</span><span class="macro">!</span> {<span class="macro-nonterminal">$</span><span class="macro-nonterminal">trait_</span>, <span class="ident">T</span>, @<span class="ident">Ref</span>, @<span class="ident">Take</span>}
         }
-        <span class="comment">// impl&lt;&#39;a,&#39;b, T: Into&lt;Expr&gt; + Clone&gt; $trait_&lt;&amp;&#39;a T&gt; for &amp;&#39;b $lhs_t {</span>
-        <span class="comment">//     type Output = Expr;</span>
-        <span class="comment">//     op_func_impl! {$trait_, &amp;T, @Ref, @Ref}</span>
-        <span class="comment">// }</span>
         <span class="macro">op_impls</span><span class="macro">!</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rest</span>)<span class="kw-2">*</span>}
     };
     <span class="comment">// The form `Expr/Symbol op T`.</span>

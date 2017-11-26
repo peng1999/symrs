@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["par",""],["sym","Definition of the expression representation."]]});
+initSidebarItems({"mod":[["par","Tools for parsing expressions."],["sym","Definition of the expression representation."]]});

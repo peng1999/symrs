@@ -63,7 +63,7 @@ expense of guaranteed safety.</p>
         <h3 id='tymethod.resolve_unchecked' class='method'><span id='resolve_unchecked.v' class='invisible'><code>unsafe fn <a href='#tymethod.resolve_unchecked' class='fnname'>resolve_unchecked</a>(self, symbol: Self::<a class="type" href="../../symtern/traits/trait.Resolve.html#associatedtype.Input" title="type symtern::traits::Resolve::Input">Input</a>) -&gt; Self::<a class="type" href="../../symtern/traits/trait.Resolve.html#associatedtype.Output" title="type symtern::traits::Resolve::Output">Output</a></code></span></h3><div class='docblock'><p>Resolve the given symbol into its referent, bypassing any
 validity checks.</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">Pool</span>::<span class="op">&lt;</span><span class="ident">str</span>, <span class="ident">u8</span><span class="op">&gt;</span>::<span class="ident">new</span>();
 <span class="kw">let</span> <span class="ident">sym</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">pool</span>.<span class="ident">intern</span>(<span class="string">&quot;abc&quot;</span>));
 

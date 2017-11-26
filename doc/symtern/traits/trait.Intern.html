@@ -76,7 +76,7 @@ does not map to any existing symbol, create and return a new one.
 This method may return an error if the interner encounters any error
 while storing the value.</p>
 
-<div class='information'><div class='tooltip ignore'>⚠<span class='tooltiptext'>Be careful when using this code, it's not being tested!</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">some_interner</span>.<span class="ident">intern</span>(<span class="string">&quot;Rosebud&quot;</span>) {
     <span class="prelude-val">Ok</span>(<span class="ident">sym</span>) <span class="op">=&gt;</span> <span class="ident">sym</span>,
     <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">MyErrorType</span>::<span class="ident">from</span>(<span class="ident">err</span>)),
