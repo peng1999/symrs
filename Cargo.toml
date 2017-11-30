@@ -16,6 +16,9 @@ nom = {version = "3.2", optional = true}
 [dev-dependencies]
 nom-test-helpers = "3.0"
 float-cmp = "0.2"
+
+# use `export RUSTFLAGS="--cfg color_diff"` to enable this function
+[target.'cfg(color_diff)'.dev-dependencies]
 pretty_assertions = "0.4"
 
 [features]

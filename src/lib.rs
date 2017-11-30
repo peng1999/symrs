@@ -8,7 +8,7 @@
 #![cfg_attr(check_doc, deny(missing_docs))]
 #![cfg_attr(feature = "cargo-clippy", warn(clippy))]
 
-#[cfg(test)]
+#[cfg(all(color_diff, test))]
 #[macro_use]
 extern crate pretty_assertions;
 
