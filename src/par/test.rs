@@ -121,33 +121,33 @@ fn product_works() {
 
 #[test]
 fn parse_works() {
-    assert_integers!(parse_expr);
-    assert_floats!(parse_expr);
-    assert_symbols!(parse_expr);
-    assert_pow!(parse_expr);
-    assert_negtive!(parse_expr);
-    assert_product!(parse_expr);
+    assert_integers!(expr);
+    assert_floats!(expr);
+    assert_symbols!(expr);
+    assert_pow!(expr);
+    assert_negtive!(expr);
+    assert_product!(expr);
 
-    assert_finished_and_eq!(parse_expr("(123)"), Expr::integer(123));
-    assert_finished_and_eq!(parse_expr("( 123 )"), Expr::integer(123));
-    assert_finished_and_eq!(parse_expr("((123))"), Expr::integer(123));
+    assert_finished_and_eq!(expr("(123)"), Expr::integer(123));
+    assert_finished_and_eq!(expr("( 123 )"), Expr::integer(123));
+    assert_finished_and_eq!(expr("((123))"), Expr::integer(123));
 
     let x = Symbol::new("x");
     let y = Symbol::new("y");
-    assert_finished_and_eq!(parse_expr("2*x"), 2i32 * x);
-    assert_finished_and_eq!(parse_expr("2 * x"), 2i32 * x);
-    assert_finished_and_eq!(parse_expr("x *x"), x * x);
-    assert_finished_and_eq!(parse_expr("2 * x * 5"), 2 * x * 5);
-    assert_finished_and_eq!(parse_expr("2 * x / y"), 2i32 * x / y);
-    assert_finished_and_eq!(parse_expr("2 * (x / y)"), 2i32 * (x / y));
-    assert_finished_and_eq!(parse_expr("2 * (x * y)"), 2i32 * (x * y));
-    assert_finished_and_eq!(parse_expr("(2 * x) * y"), (2i32 * x) * y);
-    assert_finished_and_eq!(parse_expr("2*-x"), 2i32 * - x);
-    assert_finished_and_eq!(parse_expr("-2 * x"), -2i32 * x);
-    println!("{:?}", parse_expr("2 * -(-x / - y)"));
-    assert_finished_and_eq!(parse_expr("2 * -(-x / - y)"), 2i32 * - (- x / - y));
-    assert_finished_and_eq!(parse_expr("2 * -(-x / 3 ^ - y)"), 2i32 * - (- x / Expr::pow(3.into(), - y)));
-    assert_finished_and_eq!(parse_expr("2 * -(-x / 3 ^ - y) - 4"), 2i32 * - (- x / Expr::pow(3.into(), - y)) - 4);
-    assert_finished_and_eq!(parse_expr("x / (3 + 5 * - x - (- y^4))"), x / (3 + 5 * - x - (- y.pow(4))));
+    assert_finished_and_eq!(expr("2*x"), 2i32 * x);
+    assert_finished_and_eq!(expr("2 * x"), 2i32 * x);
+    assert_finished_and_eq!(expr("x *x"), x * x);
+    assert_finished_and_eq!(expr("2 * x * 5"), 2 * x * 5);
+    assert_finished_and_eq!(expr("2 * x / y"), 2i32 * x / y);
+    assert_finished_and_eq!(expr("2 * (x / y)"), 2i32 * (x / y));
+    assert_finished_and_eq!(expr("2 * (x * y)"), 2i32 * (x * y));
+    assert_finished_and_eq!(expr("(2 * x) * y"), (2i32 * x) * y);
+    assert_finished_and_eq!(expr("2*-x"), 2i32 * - x);
+    assert_finished_and_eq!(expr("-2 * x"), -2i32 * x);
+    println!("{:?}", expr("2 * -(-x / - y)"));
+    assert_finished_and_eq!(expr("2 * -(-x / - y)"), 2i32 * - (- x / - y));
+    assert_finished_and_eq!(expr("2 * -(-x / 3 ^ - y)"), 2i32 * - (- x / Expr::pow(3.into(), - y)));
+    assert_finished_and_eq!(expr("2 * -(-x / 3 ^ - y) - 4"), 2i32 * - (- x / Expr::pow(3.into(), - y)) - 4);
+    assert_finished_and_eq!(expr("x / (3 + 5 * - x - (- y^4))"), x / (3 + 5 * - x - (- y.pow(4))));
 }
 

@@ -2,7 +2,8 @@
 
 use sym::Expr;
 use num::BigInt;
-use nom::{digit, float_s, IResult};
+use nom::{digit, float_s, IResult, IError};
+use std::result;
 use std::str::{self, FromStr};
 
 /// fn(&str)-> IResult<&str, Expr>
@@ -71,7 +72,7 @@ named!(primitive<&str, Expr>,
 named!(parens<&str, Expr>,
        ws!(delimited!(
                tag_s!("("),
-               parse_expr,
+               expr,
                tag_s!(")")
             ))
        );
@@ -148,6 +149,12 @@ named!(sum<&str, Expr>, do_parse!(
        (res)
    ));
 
+pub fn expr(input: &str) -> IResult<&str, Expr> {
+    sum(input)
+}
+
+pub type Result<'a, T> = result::Result<T, IError<&'a str>>;
+
 /// Parse an expression.
 ///
 /// # Examples
@@ -156,10 +163,10 @@ named!(sum<&str, Expr>, do_parse!(
 /// use symrs::par::parse_expr;
 ///
 /// let x = Symbol::new("x");
-/// assert_eq!(parse_expr("1 + (7 - x)").unwrap().1, 1 + (7 - x));
+/// assert_eq!(parse_expr("1 + (7 - x)").unwrap(), 1 + (7 - x));
 /// ```
-pub fn parse_expr(input: &str) -> IResult<&str, Expr> {
-    sum(input)
+pub fn parse_expr(input: &str) -> Result<Expr> {
+    expr(input).to_full_result()
 }
 
 #[cfg(test)]
