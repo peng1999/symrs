@@ -4,23 +4,23 @@ version = "0.0.0"
 authors = ["Peng Guanwen <pgw1999@outlook.com>"]
 description = "Symbolic computation in Rust"
 repository = "https://github.com/peng1999/symrs"
+edition = "2018"
 
 [dependencies]
 cfg-if = "0.1"
-lazy_static = "1.0"
-num = "0.1"
+lazy_static = "1.2"
+num = "0.2"
 symtern = "0.1"
 itertools = "0.7"
-nom = {version = "3.2", optional = true}
+nom = {version = "4.1", optional = true}
 
 [dev-dependencies]
 nom-test-helpers = "3.0"
-float-cmp = "0.2"
+float-cmp = "0.4"
 
 # use `export RUSTFLAGS="--cfg color_diff"` to enable this function
 [target.'cfg(color_diff)'.dev-dependencies]
-pretty_assertions = "0.4"
+pretty_assertions = "0.5"
 
 [features]
 parser = ["nom"]
-nightly = ["parser", "nom/nightly"]
