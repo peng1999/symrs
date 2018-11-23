@@ -1,8 +1,9 @@
 //! Tools for parsing expressions.
 
-use sym::Expr;
+use crate::sym::Expr;
 use num::BigInt;
-use nom::{digit, float_s, IResult, IError};
+use nom::{digit, float_s, IResult, Err};
+use nom::*;
 use std::result;
 use std::str::{self, FromStr};
 
@@ -22,7 +23,7 @@ named!(integer<&str, Expr>,
 
 /// fn(&str)-> IResult<&str, Expr>
 /// Parses a float.
-named!(float<&str, Expr>,
+named!(float_e<&str, Expr>,
        map!(
            float_s,
            Expr::approximate
@@ -63,7 +64,7 @@ named!(symbol<&str, Expr>,
 /// float, integer or symbol.
 named!(primitive<&str, Expr>,
        alt_complete!(
-           float |
+           float_e |
            integer |
            symbol
        ));
@@ -153,7 +154,7 @@ pub fn expr(input: &str) -> IResult<&str, Expr> {
     sum(input)
 }
 
-pub type Result<'a, T> = result::Result<T, IError<&'a str>>;
+pub type Result<'a, T> = result::Result<T, Err<&'a str>>;
 
 /// Parse an expression.
 ///
@@ -166,7 +167,7 @@ pub type Result<'a, T> = result::Result<T, IError<&'a str>>;
 /// assert_eq!(parse_expr("1 + (7 - x)").unwrap(), 1 + (7 - x));
 /// ```
 pub fn parse_expr(input: &str) -> Result<Expr> {
-    expr(input).to_full_result()
+    expr(input).map(|(_, o)| o)
 }
 
 #[cfg(test)]

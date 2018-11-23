@@ -3,7 +3,7 @@ use std::fmt::{self, Display};
 use symtern::prelude::*;
 use symtern::{Pool, Sym};
 use symtern::adaptors::{self, Inline};
-use sym::Expr;
+use crate::sym::Expr;
 
 type InlinePool = Inline<Pool<str, u32>>;
 type InlineSym = adaptors::InlineSym<Sym<u32>>;

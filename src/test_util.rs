@@ -1,6 +1,6 @@
 //! Test utilities.
 
-use sym::Expr;
+use crate::sym::Expr;
 
 /// A helper function to convert `Expr` to f64.
 pub fn as_f64(e: &Expr) -> f64 {
@@ -14,13 +14,14 @@ pub fn as_f64(e: &Expr) -> f64 {
 macro_rules! assert_finished_and_near {
     ($e:expr, $o:expr) => {
         {
-            use ::nom::IResult;
-            use ::float_cmp::ApproxEqRatio;
-            use $crate::test_util::as_f64;
+            use std::result;
+            use float_cmp::ApproxEqRatio;
+            use crate::test_util::as_f64;
 
-            if let IResult::Done(i, o) = $e {
+            if let result::Result::Ok((i, o)) = $e {
                 assert_empty!(i);
                 assert!(as_f64(&o).approx_eq_ratio(&$o, 1e-6));
+                // assert!(o.approx_eq_ratio(&$o, 1e-6));
             } else {
                 panic!("parser did not complete");
             }

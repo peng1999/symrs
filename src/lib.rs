@@ -6,7 +6,8 @@
 //! expressions.
 
 #![cfg_attr(check_doc, deny(missing_docs))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy))]
+#![feature(tool_lints)]
+#![warn(clippy::all)]
 
 #[cfg(all(color_diff, test))]
 #[macro_use]
@@ -24,7 +25,6 @@ pub mod sym;
 extern crate cfg_if;
 
 cfg_if! { if #[cfg(feature = "parser")] {
-    #[macro_use]
     extern crate nom;
 
     cfg_if! { if #[cfg(test)] {

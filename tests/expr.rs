@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "cargo-clippy", allow(identity_op))]
+#![allow(clippy::identity_op)]
 
 extern crate symrs;
 extern crate num;
@@ -73,7 +73,7 @@ fn classify_expr() {
 }
 
 #[test]
-#[cfg_attr(feature = "cargo-clippy", allow(unreadable_literal))]
+#[allow(clippy::unreadable_literal)]
 fn convert_from() {
     assert_eq!(Expr::from(3), Expr::integer(3));
     assert_eq!(Expr::from(3i8), Expr::integer(3));
