@@ -1,3 +1,4 @@
+#![feature(tool_lints)]
 #![allow(clippy::identity_op)]
 
 extern crate symrs;
