@@ -1,17 +1,12 @@
 language: rust
 
 rust:
-    - stable
     - nightly
-    - 1.15.0 # lowest supported version
-
-env:
-    - FEATURES=--features="parser"
 
 matrix:
     include:
         rust: nightly
-        env: FEATURES="--all-features"
+        env: FEATURES="--features=parser"
 
 script:
     - cargo build --release --verbose
